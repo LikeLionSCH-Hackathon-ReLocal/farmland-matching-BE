@@ -6,8 +6,8 @@ import lombok.Getter;
 public class SellerUpdateRequestDto {
 
     private String sellerName;
-    private int sellerYear;
+    private Integer sellerYear;
     private String sellerNumber;
     private String sellerAddress;
-    private int sellerLand;
+    private Integer sellerLand;
 }

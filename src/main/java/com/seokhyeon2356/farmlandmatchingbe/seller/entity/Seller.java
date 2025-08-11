@@ -26,11 +26,11 @@ public class Seller {
     @Column(name = "seller_name", nullable = false)
     private String sellerName;
     @Column(name = "seller_year", nullable = false)
-    private int sellerYear;
+    private Integer sellerYear;
     @Column(name = "seller_number", nullable = false)
     private String sellerNumber;
     @Column(name = "seller_address", nullable = false)
     private String sellerAddress;
     @Column(name = "seller_land", nullable = false)
-    private int sellerLand;
+    private Integer sellerLand;
 }

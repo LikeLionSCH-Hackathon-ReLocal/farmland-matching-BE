@@ -8,10 +8,10 @@ public class SellerResponseDto {
 
     private Long sellerId;
     private String name;
-    private int year;
+    private Integer year;
     private String address;
     private String phoneNumber;
-    private int land;
+    private Integer land;
 
     public SellerResponseDto(Seller seller) {
 

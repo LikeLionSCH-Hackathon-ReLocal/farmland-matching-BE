@@ -1,20 +1,23 @@
-package com.seokhyeon2356.farmlandmatchingbe.farmlands.entity;
+package com.seokhyeon2356.farmlandmatchingbe.farmland.entity;
 
 import com.seokhyeon2356.farmlandmatchingbe.commonEntity.BaseEntity;
-import com.seokhyeon2356.farmlandmatchingbe.farmlands.aiProfit.entity.AiProfit;
-import com.seokhyeon2356.farmlandmatchingbe.farmlands.farmlandImage.entity.FarmlandImage;
+import com.seokhyeon2356.farmlandmatchingbe.aiProfit.entity.AiProfit;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "farmland")
-public class Farmland extends BaseEntity {
+public class Farmland {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +30,7 @@ public class Farmland extends BaseEntity {
     @Column(name = "land_address", nullable = false)
     private String landAddress;
 
-    @Column(name = "land_roadAddress", nullable = true)
+    @Column(name = "land_roadAddress")
     private String landRoadAddress;
 
     @Column(name = "land_number", nullable = false)
@@ -37,7 +40,7 @@ public class Farmland extends BaseEntity {
     private String landCrop;
 
     @Column(name = "land_area(m^2)", nullable = false)
-    private String landArea;
+    private Integer landArea;
 
     @Column(nullable = false)
     private String soiltype;
@@ -49,7 +52,7 @@ public class Farmland extends BaseEntity {
     private String ownerName;
 
     @Column(name = "owner_age", nullable = false)
-    private int ownerAge;
+    private Integer ownerAge;
 
     @Column(name = "owner_address", nullable = false)
     private String ownerAddress;
@@ -91,7 +94,7 @@ public class Farmland extends BaseEntity {
     private String landMatch;
 
     @Column(name = "land_price")
-    private int landPrice;
+    private Integer landPrice;
 
     @Column(name = "land_when")
     private String landWhen;
@@ -102,6 +105,10 @@ public class Farmland extends BaseEntity {
     @Column(name = "land_coment")
     private String landComent;
 
+    @CreatedDate
+    @Column(name = "land_register_date", nullable = false)
+    private LocalDateTime landRegisterDate;
+
     @Column(name = "land_register", nullable = false)
     private String landRegister;
 
@@ -111,11 +118,6 @@ public class Farmland extends BaseEntity {
     @Column(name = "land_certification", nullable = false)
     private String landCertification;
 
-    @OneToMany(mappedBy = "farmland", cascade = CascadeType.ALL)
-    private List<FarmlandImage> farmlandImages = new ArrayList<>();
-
-    @OneToOne(mappedBy = "farmland", cascade = CascadeType.ALL)
-    private AiProfit aiProfit;
-
-
+    @Column(name = "land_image")
+    private String landImage;
 }

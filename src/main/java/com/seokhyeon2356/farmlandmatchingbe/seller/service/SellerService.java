@@ -20,6 +20,18 @@ public class SellerService {
 
     public Long createSeller(SellerRequestDto sellerRequestDto) {
 
+        System.out.println("[DEBUG] createSeller 호출됨: "
+                + sellerRequestDto.getSellerName() + ", "
+                + sellerRequestDto.getSellerYear());
+
+        boolean exists = sellerRepository.existsBySellerNameAndSellerYear(
+                sellerRequestDto.getSellerName(),
+                sellerRequestDto.getSellerYear()
+        );
+        if (exists) {
+            throw new IllegalArgumentException("이미 같은 이름과 연도의 판매자가 존재합니다.");
+        }
+
         Seller seller = Seller.builder()
                 .sellerName(sellerRequestDto.getSellerName())
                 .sellerYear(sellerRequestDto.getSellerYear())
@@ -27,6 +39,10 @@ public class SellerService {
                 .sellerAddress(sellerRequestDto.getSellerAddress())
                 .sellerLand(sellerRequestDto.getSellerLand())
                 .build();
+
+        System.out.println("[DEBUG] DB 저장 시도: "
+                + seller.getSellerName() + ", "
+                + seller.getSellerYear());
 
         sellerRepository.save(seller);
 
@@ -45,10 +61,22 @@ public class SellerService {
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 판매자가 없습니다."));
 
-        seller.setSellerName(dto.getSellerName());
-        seller.setSellerYear(dto.getSellerYear());
-        seller.setSellerNumber(dto.getSellerNumber());
-        seller.setSellerAddress(dto.getSellerAddress());
-        seller.setSellerLand(dto.getSellerLand());
+        // null이 아닌 값만 업데이트
+        if (dto.getSellerName() != null) {
+            seller.setSellerName(dto.getSellerName());
+        }
+        if (dto.getSellerYear() != null) {
+            seller.setSellerYear(dto.getSellerYear());
+        }
+        if (dto.getSellerNumber() != null) {
+            seller.setSellerNumber(dto.getSellerNumber());
+        }
+        if (dto.getSellerAddress() != null) {
+            seller.setSellerAddress(dto.getSellerAddress());
+        }
+        if (dto.getSellerLand() != null) {
+            seller.setSellerLand(dto.getSellerLand());
+        }
     }
+
 }

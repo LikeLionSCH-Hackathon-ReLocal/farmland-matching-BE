@@ -1,4 +1,4 @@
-package com.seokhyeon2356.farmlandmatchingbe.farmlands.matchingInfo.entity;
+package com.seokhyeon2356.farmlandmatchingbe.matchingInfo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
