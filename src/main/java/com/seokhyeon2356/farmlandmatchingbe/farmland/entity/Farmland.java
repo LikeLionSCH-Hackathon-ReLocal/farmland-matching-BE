@@ -1,14 +1,17 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.commonEntity.BaseEntity;
-import com.seokhyeon2356.farmlandmatchingbe.aiProfit.entity.AiProfit;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.matchingInfo.entity.MatchingInfo;
+import com.seokhyeon2356.farmlandmatchingbe.seller.entity.Seller;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,7 +27,7 @@ public class Farmland {
     @Column(name = "land_id", nullable = false)
     private Long landId;
 
-    @Column(name = "land_name", nullable = false)
+    @Column(name = "land_name")
     private String landName;
 
     @Column(name = "land_address", nullable = false)
@@ -115,9 +118,17 @@ public class Farmland {
     @Column(name = "land_cadastre", nullable = false)
     private String landCadastre;
 
-    @Column(name = "land_certification", nullable = false)
+    @Column(name = "land_certification")
     private String landCertification;
 
     @Column(name = "land_image")
     private String landImage;
+
+    @OneToOne(mappedBy = "farmlandMatchingInfo", cascade = CascadeType.ALL)
+    private MatchingInfo matchingInfo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sellerId", nullable = false)
+    private Seller sellerFarmland;
+
 }

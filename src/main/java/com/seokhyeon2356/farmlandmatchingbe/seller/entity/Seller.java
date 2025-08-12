@@ -1,8 +1,11 @@
 package com.seokhyeon2356.farmlandmatchingbe.seller.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.commonEntity.BaseEntity;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,17 +23,18 @@ public class Seller {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "seller_id")
     private Long sellerId;
 
-    @Column(name = "seller_name", nullable = false)
+    @Column(nullable = false)
     private String sellerName;
-    @Column(name = "seller_year", nullable = false)
+    @Column(nullable = false)
     private Integer sellerYear;
-    @Column(name = "seller_number", nullable = false)
+    @Column(nullable = false)
     private String sellerNumber;
-    @Column(name = "seller_address", nullable = false)
+    @Column(nullable = false)
     private String sellerAddress;
-    @Column(name = "seller_land", nullable = false)
+    @Column(nullable = false)
     private Integer sellerLand;
+    @OneToMany(mappedBy = "sellerFarmland", cascade = CascadeType.ALL)
+    private List<Farmland> farmlands = new ArrayList<>();
 }

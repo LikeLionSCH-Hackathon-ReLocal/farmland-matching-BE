@@ -1,17 +1,16 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "buyer")
 public class Buyer {
 
@@ -24,7 +23,7 @@ public class Buyer {
     private String buyerName;
 
     @Column(name = "buyer_age", nullable = false)
-    private int buyerAge;
+    private Integer buyerAge;
 
     @Column(name = "buyer_gender", nullable = false)
     private String buyerGender;
@@ -38,16 +37,13 @@ public class Buyer {
     @Column(name = "buyer_email", nullable = false)
     private String buyerEmail;
 
-    @Column(name = "interest_crop", nullable = false)
-    private String interestCrop;
+    @Column(name = "buyer_image")
+    private String buyerImage;
 
-    @Column(name = "buyer_skill")
-    private String buyerSkill;
-
-    @Column(name = "buyer_want", nullable = false)
-    private String buyerWant;
-
-    @OneToOne(mappedBy = "buyer", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "buyerTrustProfile", cascade = CascadeType.ALL)
     private TrustProfile trustProfile;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "land_id")
+    Farmland farmland;
 }

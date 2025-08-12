@@ -3,11 +3,14 @@ package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import org.hibernate.annotations.Type;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +28,25 @@ public class TrustProfile {
     @Column(name = "trust_id")
     private Long trustId;
 
-    @Column(length = 1000, name = "awards")
-    private String awards;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<String> awards;
 
-    @Column(name = "motivation")
-    private String motivation;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<String> interestCrop;
 
-    @Column(name = "experience")
-    private String experience;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<String> wantTrade;
 
-    @Column(name = "want_trade", nullable = false)
-    private String wantTrade;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<String> equipment;
 
-    @Column(name = "presentation")
-    private String presentation;
+    private String oneIntroduction;
+
+    private String introduction;
 
     @Column(name = "videoURL")
     private String videoURL;
@@ -46,16 +54,18 @@ public class TrustProfile {
     @Column(name = "sns")
     private String sns;
 
+    private String personal;
+
     @Column(name = "trust_score")
     private String trustScore;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)
-    private Buyer buyer;
+    private Buyer buyerTrustProfile;
 
-    @OneToMany(mappedBy = "trustProfile", cascade = CascadeType.ALL)
-    private List<License> license = new ArrayList<>();
+    @OneToMany(mappedBy = "trustProfileLicense", cascade = CascadeType.ALL)
+    private List<License> licenses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "trustProfile", cascade = CascadeType.ALL)
-    private List<Suggest> suggest = new ArrayList<>();
+    @OneToMany(mappedBy = "trustProfileSuggest", cascade = CascadeType.ALL)
+    private List<Suggest> suggests = new ArrayList<>();
 }

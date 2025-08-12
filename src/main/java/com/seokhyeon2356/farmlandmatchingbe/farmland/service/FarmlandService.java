@@ -2,6 +2,7 @@ package com.seokhyeon2356.farmlandmatchingbe.farmland.service;
 
 import com.seokhyeon2356.farmlandmatchingbe.commonEntity.BaseEntity;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.FarmlandRequestDto;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.FarmlandResponseDto;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.FarmlandRepository;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +66,12 @@ public class FarmlandService extends BaseEntity {
 
         return farmland.getLandId();
     }
+
+    //public List<FarmlandResponseDto> getFarmlandsBySeller(Long sellerId) {
+        //return farmlandRepository.findBySeller_SellerId(sellerId).stream()
+                //.map(FarmlandResponseDto::from) // 엔티티→DTO 변환 메서드
+                //.toList();
+    //}
 }
 
 
