@@ -26,10 +26,11 @@ public class License {
     @Column(name = "license_file") //s3 저장소에서 URL로 저장받아올거임
     private String licenseFile;
 
-    @Column(name = "acquired_date", nullable = false)
-    private String acquiredDate;
+    //추후 추가 예정
+    //@Column(name = "acquired_date")
+    //private String acquiredDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trust_id")
-    private TrustProfile trustProfile;
+    private TrustProfile trustProfileLicense;
 }

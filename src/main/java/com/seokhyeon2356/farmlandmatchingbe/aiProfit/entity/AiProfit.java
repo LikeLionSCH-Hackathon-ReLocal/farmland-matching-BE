@@ -1,6 +1,6 @@
-package com.seokhyeon2356.farmlandmatchingbe.farmlands.aiProfit.entity;
+package com.seokhyeon2356.farmlandmatchingbe.aiProfit.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.farmlands.entity.Farmland;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,8 +40,4 @@ public class AiProfit {
 
     @Column(name = "net_profit", nullable = false)
     private String netProfit;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "farmland_id")
-    private Farmland farmland;
 }

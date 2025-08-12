@@ -23,13 +23,20 @@ public class SellerController {
     @PostMapping("/seller-upload")
     public ResponseEntity<Map<String, Object>> createSeller(@RequestBody SellerRequestDto sellerRequestDto) {
 
-        Long sellerId = sellerService.createSeller(sellerRequestDto);
+        try {
+            Long sellerId = sellerService.createSeller(sellerRequestDto);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "판매자 등록 완료");
-        response.put("seller_id", sellerId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "판매자 등록 완료");
+            response.put("seller_id", sellerId);
 
-        return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 
     @GetMapping("/seller/{seller_id}")

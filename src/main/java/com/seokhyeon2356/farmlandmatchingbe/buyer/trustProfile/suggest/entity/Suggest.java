@@ -20,16 +20,18 @@ public class Suggest {
     @Column(name = "suggest_id")
     private Long suggestId;
 
-    @Column(name = "suggest_name", nullable = false)
+    @Column(name = "suggest_name")
     private String suggestName;
 
-    @Column(name = "suggest_relationship", nullable = false)
+    @Column(name = "suggest_relationship")
     private String suggestRelationship;
 
-    @Column(name = "suggest_number", nullable = false)
+    @Column(name = "suggest_number")
     private String suggestNumber;
+
+    private String suggestEmail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trust_id")
-    private TrustProfile trustProfile;
+    private TrustProfile trustProfileSuggest;
 }
