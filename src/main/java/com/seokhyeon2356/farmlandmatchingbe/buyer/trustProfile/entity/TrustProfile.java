@@ -25,12 +25,13 @@ public class TrustProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "trust_id")
     private Long trustId;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private List<String> awards;
+
+    private String experience;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
@@ -48,24 +49,21 @@ public class TrustProfile {
 
     private String introduction;
 
-    @Column(name = "videoURL")
     private String videoURL;
 
-    @Column(name = "sns")
     private String sns;
 
     private String personal;
 
-    @Column(name = "trust_score")
     private String trustScore;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_id", nullable = false)
+    @JoinColumn(name = "buyer_id")
     private Buyer buyerTrustProfile;
 
-    @OneToMany(mappedBy = "trustProfileLicense", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trustProfileLicense", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<License> licenses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "trustProfileSuggest", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trustProfileSuggest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Suggest> suggests = new ArrayList<>();
 }

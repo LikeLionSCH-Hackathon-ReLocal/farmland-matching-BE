@@ -1,9 +1,12 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
-import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.MatchingInfo;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,7 +46,8 @@ public class Buyer {
     @OneToOne(mappedBy = "buyerTrustProfile", cascade = CascadeType.ALL)
     private TrustProfile trustProfile;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "land_id")
-    Farmland farmland;
+    @OneToMany(mappedBy = "buyerMatch")
+    private List<MatchingInfo> buyerInfo =  new ArrayList<>();
+
+
 }
