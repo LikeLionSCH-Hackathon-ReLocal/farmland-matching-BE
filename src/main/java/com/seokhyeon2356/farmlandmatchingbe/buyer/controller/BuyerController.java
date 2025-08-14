@@ -1,13 +1,12 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.controller;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerRequestDto;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerResDto;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.service.BuyerService;
+import com.seokhyeon2356.farmlandmatchingbe.seller.dto.SellerResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,4 +30,15 @@ public class BuyerController {
 
         return ResponseEntity.ok(response);
     }
+
+    //프로필 불러오기
+    @GetMapping("/buyer/{buyerId}")
+    public ResponseEntity<BuyerResDto> getBuyer(@PathVariable Long buyerId) {
+
+        BuyerResDto buyer = buyerService.getBuyerProfile(buyerId);
+        return  ResponseEntity.ok(buyer);
+    }
+
+    //프로필 수정
+
 }

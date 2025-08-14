@@ -4,12 +4,9 @@ import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
 import com.vladmihalcea.hibernate.type.json.JsonType;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "trustProfile")
+@Builder
 public class TrustProfile {
 
     @Id
