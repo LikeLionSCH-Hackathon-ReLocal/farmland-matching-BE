@@ -1,6 +1,7 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.service;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerRequestDto;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerResDto;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.repository.BuyerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
@@ -35,4 +36,11 @@ public class BuyerService {
         return buyer.getBuyerId();
     }
 
+    public BuyerResDto getBuyerProfile(Long buyerId) {
+
+        Buyer buyer = buyerRepository.findById(buyerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+
+        return new BuyerResDto(buyer);
+    }
 }
