@@ -16,7 +16,7 @@ import java.util.List;
 @Table(
         name = "seller",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"seller_name", "seller_year"})
+                @UniqueConstraint(columnNames = {"sellerName", "sellerYear"})
         }
 )
 public class Seller {
@@ -35,6 +35,6 @@ public class Seller {
     private String sellerAddress;
     @Column(nullable = false)
     private Integer sellerLand;
-    @OneToMany(mappedBy = "sellerFarmland", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sellerFarmland")
     private List<Farmland> farmlands = new ArrayList<>();
 }

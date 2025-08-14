@@ -1,0 +1,55 @@
+package com.seokhyeon2356.farmlandmatchingbe.farmland.controller;
+
+import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.MatchStatus;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.service.MatchingService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+@RequiredArgsConstructor
+public class MatchingController {
+    private final MatchingService matchingService;
+
+    //농지 신청하기
+    @PostMapping("/{buyerId}/farmland/{landId}/apply")
+    public ResponseEntity<Map<String, Object>> apply(
+            @PathVariable Long landId,
+            @PathVariable Long buyerId
+    ) {
+        Long matchingId = matchingService.apply(buyerId, landId);
+        return ResponseEntity.ok(Map.of(
+                "message", "신청 완료",
+                "matchingId", matchingId
+        ));
+    }
+
+    //농지 신청 삭제하기
+    @DeleteMapping("/{buyerId}/farmland/{landId}/apply-cancel")
+    public ResponseEntity<Map<String, Object>> cancelHard(
+            @PathVariable Long landId,
+            @PathVariable Long buyerId
+    ) {
+        matchingService.cancelApply(landId, buyerId);
+        return ResponseEntity.ok(Map.of(
+                "message", "신청 삭제 완료",
+                "landId", landId,
+                "buyerId", buyerId
+        ));
+    }
+
+    //농지 즐겨찾기
+    //농지 즐겨찾기 목록 보이기
+    //@GetMapping("/{buyerId}/farmland-favorites")
+
+    //농지 즐겨찾기 등록
+    //@PostMapping("/{buyerId}/farmland-favorites/{landId}")
+
+    //농지 즐겨찾기 취소
+    //@DeleteMapping("/{buyerId}/farmland-favorites-cancel/{landId}")
+}

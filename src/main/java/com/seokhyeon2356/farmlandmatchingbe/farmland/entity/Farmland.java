@@ -1,7 +1,5 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
-import com.seokhyeon2356.farmlandmatchingbe.matchingInfo.entity.MatchingInfo;
 import com.seokhyeon2356.farmlandmatchingbe.seller.entity.Seller;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,11 +8,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -30,19 +28,19 @@ public class Farmland {
     @Column(name = "land_name")
     private String landName;
 
-    @Column(name = "land_address", nullable = false)
+    @Column(name = "land_address")
     private String landAddress;
 
     @Column(name = "land_roadAddress")
     private String landRoadAddress;
 
-    @Column(name = "land_number", nullable = false)
+    @Column(name = "land_number")
     private String landNumber;
 
-    @Column(name = "land_crop", nullable = false)
+    @Column(name = "land_crop")
     private String landCrop;
 
-    @Column(name = "land_area(m^2)", nullable = false)
+    @Column(name = "land_area(m^2)")
     private Integer landArea;
 
     @Column(nullable = false)
@@ -51,22 +49,22 @@ public class Farmland {
     @Column(nullable = false)
     private String waterSource;
 
-    @Column(name = "owner_name", nullable = false)
+    @Column(name = "owner_name")
     private String ownerName;
 
-    @Column(name = "owner_age", nullable = false)
+    @Column(name = "owner_age")
     private Integer ownerAge;
 
-    @Column(name = "owner_address", nullable = false)
+    @Column(name = "owner_address")
     private String ownerAddress;
 
-    @Column(name = "land_water", nullable = false)
+    @Column(name = "land_water")
     private String landWater;
 
-    @Column(name = "land_elec", nullable = false)
+    @Column(name = "land_elec")
     private String landElec;
 
-    @Column(name = "land_machine", nullable = false)
+    @Column(name = "land_machine")
     private String landMachine;
 
     @Column(name = "land_storage")
@@ -78,19 +76,19 @@ public class Farmland {
     @Column(name = "land_fence")
     private String landFence;
 
-    @Column(name = "land_road", nullable = false)
+    @Column(name = "land_road")
     private String landRoad;
 
-    @Column(name = "land_wellRoad", nullable = false)
+    @Column(name = "land_wellRoad")
     private String landWellRoad;
 
-    @Column(name = "land_bus", nullable = false)
+    @Column(name = "land_bus")
     private String landBus;
 
-    @Column(name = "land_car", nullable = false)
+    @Column(name = "land_car")
     private String landCar;
 
-    @Column(name = "land_trade", nullable = false)
+    @Column(name = "land_trade")
     private String landTrade;
 
     @Column(name = "land_match")
@@ -109,13 +107,13 @@ public class Farmland {
     private String landComent;
 
     @CreatedDate
-    @Column(name = "land_register_date", nullable = false)
+    @Column(name = "land_register_date")
     private LocalDateTime landRegisterDate;
 
-    @Column(name = "land_register", nullable = false)
+    @Column(name = "land_register")
     private String landRegister;
 
-    @Column(name = "land_cadastre", nullable = false)
+    @Column(name = "land_cadastre")
     private String landCadastre;
 
     @Column(name = "land_certification")
@@ -124,11 +122,11 @@ public class Farmland {
     @Column(name = "land_image")
     private String landImage;
 
-    @OneToOne(mappedBy = "farmlandMatchingInfo", cascade = CascadeType.ALL)
-    private MatchingInfo matchingInfo;
+    @OneToMany(mappedBy = "farmlandMatch")
+    private List<MatchingInfo> matchingInfo =  new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sellerId", nullable = false)
+    @JoinColumn(name = "sellerId")
     private Seller sellerFarmland;
 
 }
