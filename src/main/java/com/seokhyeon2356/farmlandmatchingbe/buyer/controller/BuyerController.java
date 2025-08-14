@@ -2,6 +2,7 @@ package com.seokhyeon2356.farmlandmatchingbe.buyer.controller;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerRequestDto;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerResDto;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerUpdateReq;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.service.BuyerService;
 import com.seokhyeon2356.farmlandmatchingbe.seller.dto.SellerResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,18 @@ public class BuyerController {
     }
 
     //프로필 수정
+    @PutMapping("buyer-update/{buyerId}")
+    public ResponseEntity<Map<String,Object>> updateBuyer(
+            @PathVariable Long buyerId,
+            @ModelAttribute BuyerUpdateReq buyerUpdateReq) throws IOException {
+
+        buyerService.updateBuyerProfile(buyerId, buyerUpdateReq);
+
+        Map<String,Object> response = new HashMap<>();
+        response.put("message", "구매자 정보 수정 완료");
+        response.put("buyerId",buyerId);
+
+        return ResponseEntity.ok(response);
+    }
 
 }
