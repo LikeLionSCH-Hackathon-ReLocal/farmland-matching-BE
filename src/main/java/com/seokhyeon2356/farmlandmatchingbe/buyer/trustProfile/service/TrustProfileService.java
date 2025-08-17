@@ -1,6 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.service;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.repository.BuyerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.dto.TrustProfileReq;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.dto.TrustProfileRes;

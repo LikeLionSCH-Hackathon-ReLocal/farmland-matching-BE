@@ -1,8 +1,7 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.dto;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 public class BuyerResDto {
@@ -14,7 +13,7 @@ public class BuyerResDto {
     private String buyerAddress;
     private String buyerNumber;
     private String buyerEmail;
-    private String buyerImageURL;
+    private String buyerImage;
 
     public BuyerResDto(Buyer buyer) {
 
@@ -25,6 +24,6 @@ public class BuyerResDto {
         this.buyerAddress = buyer.getBuyerAddress();
         this.buyerNumber = buyer.getBuyerNumber();
         this.buyerEmail = buyer.getBuyerEmail();
-        buyerImageURL = buyer.getBuyerImage();
+        buyerImage = buyer.getBuyerImage();
     }
 }

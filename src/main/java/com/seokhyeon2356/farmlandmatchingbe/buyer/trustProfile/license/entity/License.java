@@ -2,10 +2,7 @@ package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
@@ -15,6 +12,7 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "license")
 public class License {
 

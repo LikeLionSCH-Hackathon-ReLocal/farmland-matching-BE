@@ -7,11 +7,13 @@ public record FarmlandListRes(
         String landCrop,
         String landAddress,
         Integer landArea,
-        Integer landPrice
+        Integer landPrice,
+        Double landLat,
+        Double landLng
 ) {
     public static FarmlandListRes from(Farmland f) {
         return new FarmlandListRes(
-                f.getLandName(), f.getLandCrop(), f.getLandAddress(), f.getLandArea(), f.getLandPrice()
+                f.getLandName(), f.getLandCrop(), f.getLandAddress(), f.getLandArea(), f.getLandPrice(), f.getLandLat(), f.getLandLng()
         );
     }
 }

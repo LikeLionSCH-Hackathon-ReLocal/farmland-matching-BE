@@ -1,6 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
 import com.vladmihalcea.hibernate.type.json.JsonType;
@@ -9,9 +9,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;

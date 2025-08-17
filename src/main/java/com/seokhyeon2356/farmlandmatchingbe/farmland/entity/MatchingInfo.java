@@ -1,6 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.MatchStatus;
 import jakarta.persistence.*;
 import lombok.*;

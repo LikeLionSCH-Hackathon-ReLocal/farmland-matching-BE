@@ -1,6 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.dto;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
@@ -20,7 +20,7 @@ public record ApplicantsDetailRes(
         List<String> interestCrop, //crops
         String experience, //exp
         List<String> equipment, //gears
-        List<String> wantTrade, //trads
+        List<String> wantTrade, //trades
         List<String> suggests, //suggestNames
         List<String> licenses, //licenseNames
         MatchStatus matchStatus
