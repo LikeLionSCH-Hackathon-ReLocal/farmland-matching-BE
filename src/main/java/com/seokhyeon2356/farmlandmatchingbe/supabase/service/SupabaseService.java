@@ -27,7 +27,7 @@ public class SupabaseService {
     public String uploadFile(MultipartFile file) throws IOException {
 
         if (file == null || file.isEmpty()) {
-            return null; // 또는 Optional.empty() 리턴하도록 설계해도 됩니다.
+            return null;
         }
 
         String safeName = URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
@@ -53,5 +53,8 @@ public class SupabaseService {
         } else {
             throw new RuntimeException("Supabase 업로드 실패: " + response.getStatusCodeValue() + " - " + response.getBody());
         }
+    }
+
+    public void delete(String landImage) {
     }
 }

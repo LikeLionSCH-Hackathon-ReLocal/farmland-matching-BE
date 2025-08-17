@@ -17,13 +17,16 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
             "order by mi.matchingId desc")
     List<MatchingInfo> findAllBuyerByLandId(@Param("landId") Long landId);
 
-    @Query("select distinct mi from MatchingInfo mi " +
-            "join fetch mi.buyerMatch b " +           // ← buyerMatch (네 필드명)
-            "left join fetch b.trustProfile tp " +    // ← buyerMatch.trustProfile
-            "left join fetch tp.licenses lic " +      // ← trustProfile.licenses (List)
-            "left join fetch tp.suggests sug " +
-            "where mi.farmlandMatch.landId = :landId and b.buyerId = :buyerId")
-    Optional<MatchingInfo> findDetailBuyerInfoAndTrustAndLicensesAndSuggests(
+    @Query("""
+    select distinct mi
+    from MatchingInfo mi
+    join fetch mi.buyerMatch b
+    left join fetch b.trustProfile tp
+    left join fetch tp.licenses lic
+    where mi.farmlandMatch.landId = :landId
+      and b.buyerId = :buyerId
+    """)
+    Optional<MatchingInfo> findDetailBuyerInfoAndTrustAndLicenses(
             @Param("landId") Long landId, @Param("buyerId") Long buyerId);
 
     boolean existsByFarmlandMatch_LandIdAndBuyerMatch_BuyerId(Long landId, Long buyerId);

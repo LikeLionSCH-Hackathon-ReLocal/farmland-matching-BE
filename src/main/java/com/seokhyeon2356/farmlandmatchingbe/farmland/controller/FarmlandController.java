@@ -5,8 +5,6 @@ import com.seokhyeon2356.farmlandmatchingbe.farmland.service.FarmlandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,10 +30,20 @@ public class FarmlandController {
 
         return ResponseEntity.ok(response);
     }
+    //그냥 모든 농지 보이기
+    @GetMapping("/farmland")
+    public Page<FarmlandListRes> getAllFarmland(Pageable pageable) {
+
+        return farmlandService.getFarmlandList(pageable);
+    }
+
+    //전체 농지 -> 상세 농지 정보 보기 ex)1번 농지 상세보기
+    //@GetMapping("/farmland/{landId}")
+    //public
 
     //seller의 모든 농지 조회
     @GetMapping("/{sellerId}/farmland")
-    public List<FarmlandListRes> listBySeller(@PathVariable Long sellerId) {
+    public List<SellerFarmlandListRes> listBySeller(@PathVariable Long sellerId) {
         return farmlandService.getFarmlandsBySeller(sellerId);
     }
 
@@ -44,8 +52,9 @@ public class FarmlandController {
     public ResponseEntity<String> update(
             @PathVariable Long sellerId,
             @PathVariable Long landId,
-            @RequestBody FarmlandUpdateReq req
-    ) {
+            @ModelAttribute SellerFarmlandUpdateReq req
+    ) throws IOException {
+
         farmlandService.updateFarmland(sellerId, landId, req);
         return ResponseEntity.ok("농지 정보 수정 완료");
     }
@@ -62,7 +71,7 @@ public class FarmlandController {
 
     //농지 상세보기
     @GetMapping("/{sellerId}/farmland/{landId}")
-    public FarmlandDetailRes getDetail(
+    public SellerFarmlandDetailRes getDetail(
             @PathVariable Long sellerId,
             @PathVariable Long landId
     ) {
@@ -71,7 +80,7 @@ public class FarmlandController {
 
     //신청자 상세보기
     @GetMapping("/{sellerId}/farmland/{landId}/applicants/{buyerId}")
-    public BuyerDetailRes getApplicantDetail(
+    public ApplicantsDetailRes getApplicantDetail(
             @PathVariable Long sellerId,
             @PathVariable Long landId,
             @PathVariable Long buyerId

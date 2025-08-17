@@ -1,20 +1,17 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.dto;
 
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
-import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.MatchingInfo;
 
 public record FarmlandListRes(
-        Long landId, String landName, String landAddress, String landCrop, Integer landArea, MatchStatus matchStatus
+        String landName,
+        String landCrop,
+        String landAddress,
+        Integer landArea,
+        Integer landPrice
 ) {
-    public static FarmlandListRes from(Farmland f, MatchStatus status) {
+    public static FarmlandListRes from(Farmland f) {
         return new FarmlandListRes(
-                f.getLandId(),
-                f.getLandName(),
-                f.getLandAddress(),
-                f.getLandCrop(),
-                f.getLandArea(),
-                status
+                f.getLandName(), f.getLandCrop(), f.getLandAddress(), f.getLandArea(), f.getLandPrice()
         );
     }
 }
-

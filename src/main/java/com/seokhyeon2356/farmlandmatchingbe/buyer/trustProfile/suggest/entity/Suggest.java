@@ -1,11 +1,15 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
+
+import java.util.Objects;
 
 @Entity
 @Setter
@@ -34,4 +38,14 @@ public class Suggest {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trust_id")
     private TrustProfile trustProfileSuggest;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Suggest other = (Suggest) o;
+        return suggestId != null && Objects.equals(suggestId, other.suggestId);
+    }
+    @Override
+    public int hashCode() { return getClass().hashCode(); }
 }

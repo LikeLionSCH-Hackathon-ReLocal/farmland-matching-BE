@@ -5,12 +5,16 @@ import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.Li
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -39,20 +43,18 @@ public class TrustProfile {
     @Column(columnDefinition = "jsonb")
     private List<String> wantTrade;
 
+    private String rentPeriod;
+    private String other;
+
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private List<String> equipment;
 
     private String oneIntroduction;
-
     private String introduction;
-
     private String videoURL;
-
     private String sns;
-
     private String personal;
-
     private String trustScore;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -60,8 +62,9 @@ public class TrustProfile {
     private Buyer buyerTrustProfile;
 
     @OneToMany(mappedBy = "trustProfileLicense", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<License> licenses = new ArrayList<>();
+    private Set<License> licenses = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "trustProfileSuggest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Suggest> suggests = new ArrayList<>();
+    @Fetch(value = FetchMode.SUBSELECT)
+    private Set<Suggest> suggests = new LinkedHashSet<>();
 }
