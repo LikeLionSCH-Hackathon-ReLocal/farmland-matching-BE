@@ -17,7 +17,7 @@ public class MatchingController {
     private final MatchingService matchingService;
 
     //농지 신청하기
-    @PostMapping("/{buyerId}/farmland/{landId}/apply")
+    @PostMapping("/farmland/{landId}/{buyerId}/apply")
     public ResponseEntity<Map<String, Object>> apply(
             @PathVariable Long landId,
             @PathVariable Long buyerId
@@ -30,7 +30,7 @@ public class MatchingController {
     }
 
     //농지 신청 삭제하기
-    @DeleteMapping("/{buyerId}/farmland/{landId}/apply-cancel")
+    @DeleteMapping("/farmland/{landId}/{buyerId}/apply-cancel")
     public ResponseEntity<Map<String, Object>> cancelHard(
             @PathVariable Long landId,
             @PathVariable Long buyerId

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
+
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -17,13 +20,10 @@ public class License {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "license_id")
     private Long licenseId;
-
-    @Column(name = "license_name")
     private String licenseName;
 
-    @Column(name = "license_file") //s3 저장소에서 URL로 저장받아올거임
+    //s3 저장소에서 URL로 저장받아올거임
     private String licenseFile;
 
     //추후 추가 예정
@@ -33,4 +33,14 @@ public class License {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trust_id")
     private TrustProfile trustProfileLicense;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        License other = (License) o;
+        return licenseId != null && Objects.equals(licenseId, other.licenseId);
+    }
+    @Override
+    public int hashCode() { return getClass().hashCode(); }
 }

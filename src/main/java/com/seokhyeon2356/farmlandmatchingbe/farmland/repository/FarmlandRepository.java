@@ -1,9 +1,7 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.repository;
 
-import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.FarmlandListRes;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.SellerFarmlandListRes;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +12,7 @@ public interface FarmlandRepository extends JpaRepository<Farmland, Long> {
 
         // sellerId의 농지들 + 각 농지의 "가장 최근 MatchingInfo"의 status만 함께 선택
         @Query("""
-           select new com.seokhyeon2356.farmlandmatchingbe.farmland.dto.FarmlandListRes(
+           select new com.seokhyeon2356.farmlandmatchingbe.farmland.dto.SellerFarmlandListRes(
                f.landId, f.landName, f.landAddress, f.landCrop, f.landArea, mi.matchStatus
            )
            from Farmland f
@@ -29,6 +27,6 @@ public interface FarmlandRepository extends JpaRepository<Farmland, Long> {
            where s.sellerId = :sellerId
            order by f.landRegisterDate desc
            """)
-        List<FarmlandListRes> findAllFarmlandByseller(@Param("sellerId") Long sellerId);
+        List<SellerFarmlandListRes> findAllFarmlandByseller(@Param("sellerId") Long sellerId);
 }
 

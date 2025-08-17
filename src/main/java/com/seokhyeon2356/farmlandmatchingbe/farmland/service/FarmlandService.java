@@ -12,7 +12,10 @@ import com.seokhyeon2356.farmlandmatchingbe.seller.repository.SellerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,13 +34,12 @@ public class FarmlandService extends BaseEntity {
 
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다: " + sellerId));
-        // 1. Supabase에 파일 업로드
+
         String landRegisterUrl = supabaseService.uploadFile(dto.getLandRegister());
         String landCadastreUrl = supabaseService.uploadFile(dto.getLandCadastre());
         String landCertificationUrl = supabaseService.uploadFile(dto.getLandCertification());
         String landImageUrl = supabaseService.uploadFile(dto.getLandImage());
 
-        // 2. DB 저장용 엔티티 변환
         Farmland farmland = Farmland.builder()
                 .landName(dto.getLandName())
                 .landAddress(dto.getLandAddress())
@@ -45,6 +47,8 @@ public class FarmlandService extends BaseEntity {
                 .landNumber(dto.getLandNumber())
                 .landCrop(dto.getLandCrop())
                 .landArea(dto.getLandArea())
+                .landLat(dto.getLandLat())
+                .landLng(dto.getLandLng())
                 .soiltype(dto.getSoiltype())
                 .waterSource(dto.getWaterSource())
                 .ownerName(dto.getOwnerName())
@@ -81,30 +85,80 @@ public class FarmlandService extends BaseEntity {
 
     //농지 정보 수정
     @Transactional
-    public void updateFarmland(Long sellerId, Long landId, FarmlandUpdateReq req) {
+    public void updateFarmland(Long sellerId, Long landId, SellerFarmlandUpdateReq uReq) throws IOException{
         Farmland f = farmlandRepository.findById(landId)
                 .orElseThrow(() -> new IllegalArgumentException("농지를 찾을 수 없습니다. landId=" + landId));
         ensureOwner(f, sellerId);
 
-        // 예시로 몇 개만 반영 (네 DTO에 맞춰 추가)
-        if (req.landName() != null) f.setLandName(req.landName());
-        if (req.landAddress() != null) f.setLandAddress(req.landAddress());
-        if (req.landCrop() != null) f.setLandCrop(req.landCrop());
-        if (req.landArea() != null) f.setLandArea(req.landArea());
-        // ... 기타 필드들
+        if (uReq.landName() != null) f.setLandName(uReq.landName());
+        if (uReq.landAddress() != null) f.setLandAddress(uReq.landAddress());
+        if (uReq.landRoadAddress() != null) f.setLandRoadAddress(uReq.landRoadAddress());
+        if (uReq.landNumber() != null) f.setLandNumber(uReq.landNumber());
+        if (uReq.landLat() != null) f.setLandLat(uReq.landLat());
+        if (uReq.landLng() != null) f.setLandLng(uReq.landLng());
+        if (uReq.landCrop() != null) f.setLandCrop(uReq.landCrop());
+        if (uReq.landArea() != null) f.setLandArea(uReq.landArea());
+        if (uReq.soiltype() != null) f.setSoiltype(uReq.soiltype());
+        if (uReq.waterSource() != null) f.setWaterSource(uReq.waterSource());
+        if (uReq.ownerName() != null) f.setOwnerName(uReq.ownerName());
+        if (uReq.ownerAge() != null) f.setOwnerAge(uReq.ownerAge());
+        if (uReq.ownerAddress() != null) f.setOwnerAddress(uReq.ownerAddress());
+        if (uReq.landWater() != null) f.setLandWater(uReq.landWater());
+        if (uReq.landElec() != null) f.setLandElec(uReq.landElec());
+        if (uReq.landMachine() != null) f.setLandMachine(uReq.landMachine());
+        if (uReq.landStorage() != null) f.setLandStorage(uReq.landStorage());
+        if (uReq.landHouse() != null) f.setLandHouse(uReq.landHouse());
+        if (uReq.landFence() != null) f.setLandFence(uReq.landFence());
+        if (uReq.landRoad() != null) f.setLandRoad(uReq.landRoad());
+        if (uReq.landWellRoad() != null) f.setLandWellRoad(uReq.landWellRoad());
+        if (uReq.landBus() != null) f.setLandBus(uReq.landBus());
+        if (uReq.landCar() != null) f.setLandCar(uReq.landCar());
+        if (uReq.landTrade() != null) f.setLandTrade(uReq.landTrade());
+        if (uReq.landMatch() != null) f.setLandMatch(uReq.landMatch());
+        if (uReq.landPrice() != null) f.setLandPrice(uReq.landPrice());
+        if (uReq.landWhen() != null) f.setLandWhen(uReq.landWhen());
+        if (uReq.landWhy() != null) f.setLandWhy(uReq.landWhy());
+        if (uReq.landComent() != null) f.setLandComent(uReq.landComent());
+
+        if (isPresent(uReq.landImage())){
+            String imageURL = supabaseService.uploadFile(uReq.landImage());
+            supabaseService.delete(f.getLandImage());
+            f.setLandImage(imageURL);
+        }
+
+        if (isPresent(uReq.landRegister())){
+            String registerURL = supabaseService.uploadFile(uReq.landRegister());
+            supabaseService.delete(f.getLandRegister());
+            f.setLandRegister(registerURL);
+        }
+
+        if (isPresent(uReq.landCadastre())){
+            String cadastreURL = supabaseService.uploadFile(uReq.landCadastre());
+            supabaseService.delete(f.getLandCadastre());
+            f.setLandCadastre(cadastreURL);
+        }
+
+        if (isPresent(uReq.landCertification())){
+            String certificationURL = supabaseService.uploadFile(uReq.landCertification());
+            supabaseService.delete(f.getLandCertification());
+            f.setLandCertification(certificationURL);
+        }
+    }
+
+    private boolean isPresent(MultipartFile file) {
+
+        return file != null && !file.isEmpty();
     }
 
     //농지 삭제
     @Transactional
     public void deleteFarmland(Long sellerId, Long landId) {
-        // 1) 해당 landId의 농지 엔티티 조회
+
         Farmland f = farmlandRepository.findById(landId)
                 .orElseThrow(() -> new IllegalArgumentException("농지를 찾을 수 없습니다. landId=" + landId));
 
-        // 2) 삭제하려는 사람이 소유자인지 검증
         ensureOwner(f, sellerId);
 
-        // 3) 엔티티 삭제
         farmlandRepository.delete(f);
     }
 
@@ -116,7 +170,7 @@ public class FarmlandService extends BaseEntity {
         ensureOwner(f, sellerId);
 
         MatchingInfo mine = matchingInfoRepository
-                .findDetailBuyerInfoAndTrustAndLicensesAndSuggests(landId, buyerId)
+                .findDetailBuyerInfoAndTrustAndLicenses(landId, buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("신청 정보를 찾을 수 없습니다."));
 
         mine.setMatchStatus(MatchStatus.IN_PROGRESS);
@@ -130,48 +184,48 @@ public class FarmlandService extends BaseEntity {
         ensureOwner(f, sellerId);
 
         MatchingInfo mi = matchingInfoRepository
-                .findDetailBuyerInfoAndTrustAndLicensesAndSuggests(landId, buyerId)
+                .findDetailBuyerInfoAndTrustAndLicenses(landId, buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("신청 정보를 찾을 수 없습니다."));
 
         mi.setMatchStatus(MatchStatus.REJECTED);
     }
 
-    //농지 상세 보기 (신청자 목록까지 보이기)
+    //농지 전체보기
     @Transactional
-    public List<FarmlandListRes> getFarmlandsBySeller(Long sellerId) {
+    public Page<FarmlandListRes> getFarmlandList(Pageable pageable) {
+        return farmlandRepository.findAll(pageable).map(FarmlandListRes::from);
+    }
+
+    //판매자가 등록한 농지 전체보기
+    @Transactional
+    public List<SellerFarmlandListRes> getFarmlandsBySeller(Long sellerId) {
         return farmlandRepository.findAllFarmlandByseller(sellerId);
     }
 
-    public FarmlandDetailRes getFarmlandDetail(Long sellerId, Long landId) {
+    //농지 상세 보기 (신청자 목록까지 보이기)
+    public SellerFarmlandDetailRes getFarmlandDetail(Long sellerId, Long landId) {
         Farmland f = farmlandRepository.findById(landId)
                 .orElseThrow(() -> new IllegalArgumentException("농지를 찾을 수 없습니다. landId=" + landId));
 
-        // (선택) 소유자 검증
         ensureOwner(f, sellerId);
 
         List<MatchingInfo> list = matchingInfoRepository.findAllBuyerByLandId(landId);
 
-        // 화면 상단에 보여줄 대표 상태 선택 로직
-        MatchStatus topStatus =
-                list.stream().anyMatch(mi -> mi.getMatchStatus() == MatchStatus.IN_PROGRESS)
-                        ? MatchStatus.IN_PROGRESS
-                        : MatchStatus.WAITING;                       // 없으면 디폴트
-
-        return FarmlandDetailRes.of(f, topStatus, list);
+        return SellerFarmlandDetailRes.of(f, list);
     }
 
     //신청자 상세보기
-    public BuyerDetailRes getApplicantDetail(Long sellerId, Long landId, Long buyerId) {
-        // (선택) landId 소유 검증을 위해 우선 Farmland만 가볍게 읽어 확인해도 됨
+    public ApplicantsDetailRes getApplicantDetail(Long sellerId, Long landId, Long buyerId) {
+
         Farmland f = farmlandRepository.findById(landId)
                 .orElseThrow(() -> new IllegalArgumentException("농지를 찾을 수 없습니다. landId=" + landId));
         ensureOwner(f, sellerId);
 
         MatchingInfo mi = matchingInfoRepository
-                .findDetailBuyerInfoAndTrustAndLicensesAndSuggests(landId, buyerId)
+                .findDetailBuyerInfoAndTrustAndLicenses(landId, buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("신청 정보를 찾을 수 없습니다."));
 
-        return BuyerDetailRes.of(mi);
+        return ApplicantsDetailRes.of(mi);
     }
 
     //소유자 인증?

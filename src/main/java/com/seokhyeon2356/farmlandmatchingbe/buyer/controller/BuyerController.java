@@ -41,7 +41,7 @@ public class BuyerController {
     }
 
     //프로필 수정
-    @PutMapping("buyer-update/{buyerId}")
+    @PatchMapping("buyer-update/{buyerId}")
     public ResponseEntity<Map<String,Object>> updateBuyer(
             @PathVariable Long buyerId,
             @ModelAttribute BuyerUpdateReq buyerUpdateReq) throws IOException {

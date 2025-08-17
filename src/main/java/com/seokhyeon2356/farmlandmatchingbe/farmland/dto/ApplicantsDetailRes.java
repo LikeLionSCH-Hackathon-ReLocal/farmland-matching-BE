@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record BuyerDetailRes(
+public record ApplicantsDetailRes(
         Long buyerId,
         String buyerName,
         String buyerNumber,
@@ -25,7 +25,7 @@ public record BuyerDetailRes(
         List<String> licenses, //licenseNames
         MatchStatus matchStatus
 ) {
-    public static BuyerDetailRes of(MatchingInfo mi) {
+    public static ApplicantsDetailRes of(MatchingInfo mi) {
 
         Buyer b  = mi.getBuyerMatch();           // 네 필드명에 맞게
         TrustProfile tp = (b != null) ? b.getTrustProfile() : null;
@@ -69,7 +69,7 @@ public record BuyerDetailRes(
         String introURL = (tp != null) ? tp.getVideoURL() : null;
         String exp = (tp != null) ? tp.getExperience() : null;
 
-        return new BuyerDetailRes(
+        return new ApplicantsDetailRes(
                 b.getBuyerId(),
                 b.getBuyerName(),
                 b.getBuyerNumber(),

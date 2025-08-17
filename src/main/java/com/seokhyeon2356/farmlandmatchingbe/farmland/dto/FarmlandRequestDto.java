@@ -11,6 +11,8 @@ public class FarmlandRequestDto {
     private String landName;
     private String landAddress;
     private String landLoadAddress;
+    private Double landLat;
+    private Double landLng;
     private String landNumber;
     private String landCrop;
     private Integer landArea;

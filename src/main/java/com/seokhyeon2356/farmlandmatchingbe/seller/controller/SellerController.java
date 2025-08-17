@@ -46,7 +46,7 @@ public class SellerController {
         return  ResponseEntity.ok(seller);
     }
 
-    @PutMapping("/seller-update/{seller_id}")
+    @PatchMapping("/seller-update/{seller_id}")
     public ResponseEntity<Map<String,Object>> updateSeller(
             @PathVariable("seller_id") long sellerId,
             @RequestBody SellerUpdateRequestDto updateDto) {
