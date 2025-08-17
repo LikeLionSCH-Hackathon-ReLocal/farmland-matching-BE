@@ -3,7 +3,7 @@ package com.seokhyeon2356.farmlandmatchingbe.buyer.service;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerRequestDto;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerResDto;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.dto.BuyerUpdateReq;
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy.Buyer;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.repository.BuyerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
 import jakarta.transaction.Transactional;

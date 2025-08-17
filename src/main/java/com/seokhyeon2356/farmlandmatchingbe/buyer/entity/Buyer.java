@@ -1,4 +1,4 @@
-package com.seokhyeon2356.farmlandmatchingbe.buyer.entitiy;
+package com.seokhyeon2356.farmlandmatchingbe.buyer.entity;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.MatchingInfo;
