@@ -1,13 +1,15 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class LicenseReq {
-    Long licenseId;
+    private Long licenseId;
     private String licenseName;
     private MultipartFile licenseFile;
 }

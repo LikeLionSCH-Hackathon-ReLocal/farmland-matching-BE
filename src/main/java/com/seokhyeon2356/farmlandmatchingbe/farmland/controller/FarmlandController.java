@@ -30,16 +30,6 @@ public class FarmlandController {
 
         return ResponseEntity.ok(response);
     }
-    //그냥 모든 농지 보이기
-    @GetMapping("/farmland")
-    public Page<FarmlandListRes> getAllFarmland(Pageable pageable) {
-
-        return farmlandService.getFarmlandList(pageable);
-    }
-
-    //전체 농지 -> 상세 농지 정보 보기 ex)1번 농지 상세보기
-    //@GetMapping("/farmland/{landId}")
-    //public
 
     //seller의 모든 농지 조회
     @GetMapping("/{sellerId}/farmland")
@@ -69,7 +59,7 @@ public class FarmlandController {
         return ResponseEntity.ok().build();
     }
 
-    //농지 상세보기
+    //농지 상세보기(판매자 사이트)
     @GetMapping("/{sellerId}/farmland/{landId}")
     public SellerFarmlandDetailRes getDetail(
             @PathVariable Long sellerId,
@@ -109,4 +99,19 @@ public class FarmlandController {
         farmlandService.rejectApplicant(sellerId, landId, buyerId);
         return ResponseEntity.ok().build();
     }
+
+    //그냥 모든 농지 보이기(구매자 사이트)
+    @GetMapping("/farmland")
+    public Page<FarmlandListRes> getAllFarmland(Pageable pageable) {
+
+        return farmlandService.getFarmlandList(pageable);
+    }
+
+    //(구매자 사이트)농지 상세보기
+    @GetMapping("/farmland-detail/{landId}")
+    public FarmlandDetailRes getFarmlandDetail(@PathVariable Long landId) {
+
+        return farmlandService.getFarmlandDetail(landId);
+    }
+    
 }

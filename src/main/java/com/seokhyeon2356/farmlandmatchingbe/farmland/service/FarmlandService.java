@@ -190,12 +190,6 @@ public class FarmlandService extends BaseEntity {
         mi.setMatchStatus(MatchStatus.REJECTED);
     }
 
-    //농지 전체보기
-    @Transactional
-    public Page<FarmlandListRes> getFarmlandList(Pageable pageable) {
-        return farmlandRepository.findAll(pageable).map(FarmlandListRes::from);
-    }
-
     //판매자가 등록한 농지 전체보기
     @Transactional
     public List<SellerFarmlandListRes> getFarmlandsBySeller(Long sellerId) {
@@ -233,6 +227,52 @@ public class FarmlandService extends BaseEntity {
         if (f.getSellerFarmland() == null || !f.getSellerFarmland().getSellerId().equals(sellerId)) {
             throw new IllegalArgumentException("해당 농지의 소유자가 아닙니다.");
         }
+    }
+
+    //농지 전체보기(구매자 사이트)
+    @Transactional
+    public Page<FarmlandListRes> getFarmlandList(Pageable pageable) {
+        return farmlandRepository.findAll(pageable).map(FarmlandListRes::from);
+    }
+
+    public FarmlandDetailRes getFarmlandDetail(Long landId) {
+
+        Farmland f = farmlandRepository.findById(landId)
+                .orElseThrow(() -> new IllegalArgumentException("농지를 찾을 수 없습니다"));
+
+        return new FarmlandDetailRes(
+                f.getLandId(),
+                f.getLandName(),
+                f.getLandAddress(),
+                f.getLandRoadAddress(),
+                f.getLandNumber(),
+                f.getLandLat(),
+                f.getLandLng(),
+                f.getLandCrop(),
+                f.getLandArea(),
+                f.getSoiltype(),
+                f.getWaterSource(),
+                f.getOwnerName(),
+                f.getOwnerAge(),
+                f.getOwnerAddress(),
+                f.getLandWater(),
+                f.getLandElec(),
+                f.getLandMachine(),
+                f.getLandStorage(),
+                f.getLandHouse(),
+                f.getLandFence(),
+                f.getLandRoad(),
+                f.getLandWellRoad(),
+                f.getLandBus(),
+                f.getLandCar(),
+                f.getLandTrade(),
+                f.getLandMatch(),
+                f.getLandPrice(),
+                f.getLandWhen(),
+                f.getLandWhy(),
+                f.getLandComent(),
+                f.getLandImage()
+        );
     }
 }
 
