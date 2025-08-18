@@ -22,7 +22,7 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
     from MatchingInfo mi
     join fetch mi.buyerMatch b
     left join fetch b.trustProfile tp
-    left join fetch tp.licenses lic
+    left join fetch b.licenseList lic
     where mi.farmlandMatch.landId = :landId
       and b.buyerId = :buyerId
     """)

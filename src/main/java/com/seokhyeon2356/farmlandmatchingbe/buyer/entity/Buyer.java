@@ -1,12 +1,18 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.entity;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.MatchingInfo;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -49,5 +55,10 @@ public class Buyer {
     @OneToMany(mappedBy = "buyerMatch")
     private List<MatchingInfo> buyerInfo =  new ArrayList<>();
 
+    @OneToMany(mappedBy = "buyerLicense", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<License> licenseList = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "buyerSuggest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private Set<Suggest> suggestList = new LinkedHashSet<>();
 }

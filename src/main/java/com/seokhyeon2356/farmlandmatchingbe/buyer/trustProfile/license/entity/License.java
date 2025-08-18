@@ -1,5 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity;
 
+import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,8 +30,8 @@ public class License {
     //private String acquiredDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trust_id")
-    private TrustProfile trustProfileLicense;
+    @JoinColumn(name = "buyerId")
+    private Buyer buyerLicense;
 
     @Override
     public boolean equals(Object o) {
