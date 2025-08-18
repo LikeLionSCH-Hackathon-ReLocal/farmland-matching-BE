@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class LicenseReq {
-
+    Long licenseId;
     private String licenseName;
     private MultipartFile licenseFile;
 }

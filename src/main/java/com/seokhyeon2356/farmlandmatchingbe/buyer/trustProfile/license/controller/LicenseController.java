@@ -1,16 +1,16 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.controller;
 
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.dto.LicenseListReq;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.dto.LicenseReq;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.dto.LicenseRes;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.service.LicenseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,16 +19,18 @@ public class LicenseController {
 
     private final LicenseService licenseService;
 
-    @PostMapping("/{buyerId}/license-upload")
-    public ResponseEntity<Map<String, Object>> uploadLicense(@PathVariable Long trustId,
-                                                             @ModelAttribute LicenseReq licenseReq) throws IOException {
+    @PostMapping("/{buyerId}/license-save")
+    public ResponseEntity<String> uploadLicense(@PathVariable Long buyerId,
+                                                @ModelAttribute LicenseListReq licenseListReq) throws IOException {
 
-        Long licenseId = licenseService.saveLicense(trustId, licenseReq);
+        licenseService.saveLicense(buyerId, licenseListReq.getLicenseList());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "자격증 등록 완료");
-        response.put("licenseId", licenseId);
+        return ResponseEntity.ok("자격증등록완료");
+    }
 
-        return ResponseEntity.ok(response);
+    @GetMapping("/{buyerId}/licenses")
+    public List<LicenseRes> getLicenses(@PathVariable Long buyerId) {
+
+        return licenseService.getLicenses(buyerId);
     }
 }

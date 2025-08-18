@@ -31,16 +31,16 @@ public record ApplicantsDetailRes(
         TrustProfile tp = (b != null) ? b.getTrustProfile() : null;
 
         List<String> licenseNames =
-                (tp != null && tp.getLicenses() != null)
-                        ? tp.getLicenses().stream()
+                (b != null && b.getLicenseList() != null)
+                        ? b.getLicenseList().stream()
                         .map(License::getLicenseName)
                         .distinct()
                         .collect(Collectors.toCollection(ArrayList::new)) // ArrayList로 수집
                         : new ArrayList<>();
 
         List<String> suggestNames =
-                (tp != null && tp.getLicenses() != null)
-                        ? tp.getSuggests().stream()
+                (b != null && b.getLicenseList() != null)
+                        ? b.getSuggestList().stream()
                         .map(Suggest::getSuggestName)
                         .distinct()
                         .collect(Collectors.toCollection(ArrayList::new)) // ArrayList로 수집

@@ -58,11 +58,4 @@ public class TrustProfile {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private Buyer buyerTrustProfile;
-
-    @OneToMany(mappedBy = "trustProfileLicense", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<License> licenses = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "trustProfileSuggest", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(value = FetchMode.SUBSELECT)
-    private Set<Suggest> suggests = new LinkedHashSet<>();
 }
