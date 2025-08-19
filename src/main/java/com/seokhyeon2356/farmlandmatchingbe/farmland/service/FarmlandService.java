@@ -1,6 +1,5 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.service;
 
-import com.seokhyeon2356.farmlandmatchingbe.commonEntity.BaseEntity;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.*;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.FarmlandRepository;
@@ -23,7 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class FarmlandService extends BaseEntity {
+public class FarmlandService {
 
     private final SupabaseService supabaseService;
     private final FarmlandRepository farmlandRepository;
@@ -235,6 +234,7 @@ public class FarmlandService extends BaseEntity {
         return farmlandRepository.findAll(pageable).map(FarmlandListRes::from);
     }
 
+    //농지 상세보기 (구매자 사이트)
     public FarmlandDetailRes getFarmlandDetail(Long landId) {
 
         Farmland f = farmlandRepository.findById(landId)
@@ -250,11 +250,13 @@ public class FarmlandService extends BaseEntity {
                 f.getLandLng(),
                 f.getLandCrop(),
                 f.getLandArea(),
+                f.getLandAreaha(),
                 f.getSoiltype(),
                 f.getWaterSource(),
                 f.getOwnerName(),
                 f.getOwnerAge(),
                 f.getOwnerAddress(),
+                f.getLandRegisterDate(),
                 f.getLandWater(),
                 f.getLandElec(),
                 f.getLandMachine(),

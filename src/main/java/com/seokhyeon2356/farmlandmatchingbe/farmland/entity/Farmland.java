@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class Farmland {
     private Double landLng; //경도
     private String landCrop;
     private Integer landArea;
+    private Double landAreaha;
     private String soiltype;
     private String waterSource;
     private String ownerName;
@@ -55,7 +57,7 @@ public class Farmland {
     private String landComent;
 
     @CreatedDate
-    private LocalDateTime landRegisterDate;
+    private LocalDate landRegisterDate;
 
     private String landRegister;
     private String landCadastre;
