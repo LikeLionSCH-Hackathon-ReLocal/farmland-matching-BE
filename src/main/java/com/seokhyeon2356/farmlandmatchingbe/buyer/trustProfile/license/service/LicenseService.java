@@ -92,7 +92,10 @@ public class LicenseService {
 
         List<License> saved = licenseRepository.saveAll(toPersist);
 
+
         trustProfileService.recalcAndPersist(buyerId);
+
+
 
         return saved.stream().map(LicenseRes::new).toList();
     }
