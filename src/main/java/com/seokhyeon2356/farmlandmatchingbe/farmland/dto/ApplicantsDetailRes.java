@@ -23,6 +23,7 @@ public record ApplicantsDetailRes(
         List<String> wantTrade, //trades
         List<String> suggests, //suggestNames
         List<String> licenses, //licenseNames
+        Integer trustScore,
         MatchStatus matchStatus
 ) {
     public static ApplicantsDetailRes of(MatchingInfo mi) {
@@ -82,6 +83,7 @@ public record ApplicantsDetailRes(
                 trades,
                 suggestNames,
                 licenseNames,
+                b.getTrustScore(),
                 mi.getMatchStatus()
         );
     }

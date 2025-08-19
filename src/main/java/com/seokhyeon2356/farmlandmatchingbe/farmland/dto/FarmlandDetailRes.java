@@ -1,5 +1,7 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.dto;
 
+import java.time.LocalDate;
+
 public record FarmlandDetailRes(
 
         Long landId,
@@ -11,11 +13,13 @@ public record FarmlandDetailRes(
         Double landLng,
         String landCrop,
         Integer landArea,
+        Double landAreaha,
         String soiltype,
         String waterSource,
         String ownerName,
         Integer ownerAge,
         String ownerAddress,
+        LocalDate landRegisterDate,
         String landWater,
         String landElec,
         String landMachine,
@@ -35,3 +39,4 @@ public record FarmlandDetailRes(
         String landImage
 ) {
 }
+//여기에 ai 예상 수익, ai 예상 매칭 점수 넣을듯

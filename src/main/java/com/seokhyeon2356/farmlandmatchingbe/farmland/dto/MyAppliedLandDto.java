@@ -12,7 +12,7 @@ public record MyAppliedLandDto(
         String landName,
         String landArress,
         String landCrop,
-        LocalDateTime landRegisterDate,
+        LocalDate landRegisterDate,
         String landImage,
         String matchStatus
         //예상수익
