@@ -3,13 +3,18 @@ package com.seokhyeon2356.farmlandmatchingbe.farmland.service;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.repository.BuyerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.MatchStatus;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.MyAppliedLandDto;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.MatchingInfo;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.FarmlandRepository;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.MatchingInfoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +60,12 @@ public class MatchingService {
         matchingInfoRepository.delete(mi);
     }
 
+    //구매자가 신청한 농지 목록 조회
+    public List<MyAppliedLandDto> listByBuyer(Long buyerId) {
+        List<MatchingInfo> rows = matchingInfoRepository.findAllByBuyer(buyerId);
+        return rows.stream().map(MyAppliedLandDto::from).toList();
+    }
+
     //농지 즐겨찾기
+
 }

@@ -11,7 +11,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "matchingInfo")
+@Table(name = "matchingInfo",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"buyer_id","land_id"})
+        })
 public class MatchingInfo {
 
     @Id
@@ -21,9 +24,9 @@ public class MatchingInfo {
     @Enumerated(EnumType.STRING)
     private MatchStatus matchStatus = MatchStatus.WAITING;
 
-    private Integer recommendCount = 0;
+    //private Integer recommendCount = 0;
 
-    private String preferences;
+    //private String preferences;
 
     /** 이 매칭(신청)이 연결된 '농지' — 한 농지에 여러 신청이 올 수 있으므로 ManyToOne */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,7 +38,7 @@ public class MatchingInfo {
     @JoinColumn(name = "buyer_id")
     private Buyer buyerMatch;
 
-    // 추천수 증가 메서드
+    /* 추천수 증가 메서드
     public void increaseRecommendCount() {
 
         this.recommendCount += 1;
@@ -44,5 +47,5 @@ public class MatchingInfo {
     public void decreaseRecommendCount() {
 
         this.recommendCount -= 1;
-    }
+    }*/
 }

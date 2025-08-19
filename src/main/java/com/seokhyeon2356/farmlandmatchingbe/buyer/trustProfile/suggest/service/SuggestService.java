@@ -2,6 +2,7 @@ package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.service;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.repository.BuyerRepository;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.service.TrustProfileService;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.dto.SuggestReq;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.dto.SuggestRes;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
@@ -21,6 +22,7 @@ public class SuggestService {
 
     private final SuggestRepository suggestRepository;
     private final BuyerRepository buyerRepository;
+    private final TrustProfileService trustProfileService;
 
     @Transactional
     public void saveSuggests(Long buyerId, List<SuggestReq> reqs) {
@@ -68,6 +70,7 @@ public class SuggestService {
                 // save 안 해도 JPA dirty checking 으로 자동 update
             }
         }
+        trustProfileService.recalcAndPersist(buyerId);
     }
 
     public List<SuggestRes> getSuggests(Long buyerId) {

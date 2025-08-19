@@ -1,14 +1,13 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.controller;
 
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.MatchStatus;
+import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.MyAppliedLandDto;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.service.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,7 +21,7 @@ public class MatchingController {
             @PathVariable Long landId,
             @PathVariable Long buyerId
     ) {
-        Long matchingId = matchingService.apply(buyerId, landId);
+        Long matchingId = matchingService.apply(landId, buyerId);
         return ResponseEntity.ok(Map.of(
                 "message", "신청 완료",
                 "matchingId", matchingId
@@ -41,6 +40,13 @@ public class MatchingController {
                 "landId", landId,
                 "buyerId", buyerId
         ));
+    }
+
+    //신청한 농지 목록 보이기
+    @GetMapping("/applied-farmland/{buyerId}")
+    public List<MyAppliedLandDto> myApplied(@PathVariable Long buyerId) {
+
+        return matchingService.listByBuyer(buyerId);
     }
 
     //농지 즐겨찾기

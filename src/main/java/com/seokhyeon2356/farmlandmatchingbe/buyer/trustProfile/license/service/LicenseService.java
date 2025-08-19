@@ -8,6 +8,7 @@ import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.repo.Lice
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.dto.LicenseReq;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.repository.TrustProfileRepository;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.service.TrustProfileService;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class LicenseService {
     private final LicenseRepository licenseRepository;
     private final SupabaseService supabaseService;
     private final BuyerRepository buyerRepository;
+    private final TrustProfileService trustProfileService;
 
     @Transactional
     public List<LicenseRes> saveLicense(Long buyerId, List<LicenseReq> requestList) throws IOException {
@@ -89,6 +91,12 @@ public class LicenseService {
         if (!toDelete.isEmpty()) licenseRepository.deleteAllInBatch(toDelete);
 
         List<License> saved = licenseRepository.saveAll(toPersist);
+
+
+        trustProfileService.recalcAndPersist(buyerId);
+
+
+
         return saved.stream().map(LicenseRes::new).toList();
     }
 

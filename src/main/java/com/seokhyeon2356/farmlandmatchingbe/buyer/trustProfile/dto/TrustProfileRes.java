@@ -13,6 +13,8 @@ public class TrustProfileRes {
     private List<String> wantTrade;
     private List<String> awards;
     private String experience;
+    private String experiencePeriod;
+    private String experienceDetail;
     private String rentPeriod;
     private String other;
     private String oneIntroduction;
@@ -28,6 +30,8 @@ public class TrustProfileRes {
         this.wantTrade = trustProfile.getWantTrade();
         this.awards = trustProfile.getAwards();
         this.experience = trustProfile.getExperience();
+        this.experiencePeriod = trustProfile.getExperiencePeriod();
+        this.experienceDetail = trustProfile.getExperienceDetail();
         this.rentPeriod = trustProfile.getRentPeriod();
         this.other = trustProfile.getOther();
         this.oneIntroduction = trustProfile.getOneIntroduction();
