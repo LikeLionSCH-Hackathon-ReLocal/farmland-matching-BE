@@ -20,6 +20,8 @@ public class TrustProfileReq {
     private List<String> wantTrade;
     private List<String> awards;
     private String experience;
+    private String experiencePeriod;
+    private String experienceDetail;
     private String rentPeriod;
     private String other;
     private String oneIntroduction;

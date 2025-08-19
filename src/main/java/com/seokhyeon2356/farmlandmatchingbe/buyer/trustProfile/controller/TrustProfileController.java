@@ -2,6 +2,7 @@ package com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.controller;
 
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.dto.TrustProfileReq;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.dto.TrustProfileRes;
+import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.dto.TrustScore;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.service.TrustProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,12 @@ public class TrustProfileController {
 
         TrustProfileRes tp = trustProfileService.getTrustProfile(buyerId);
         return ResponseEntity.ok(tp);
+    }
+
+    //신뢰 점수 불러오기
+    @GetMapping("/{buyerId}/trust-score")
+    public TrustScore getScore(@PathVariable Long buyerId) {
+
+        return trustProfileService.compute(buyerId);
     }
 }

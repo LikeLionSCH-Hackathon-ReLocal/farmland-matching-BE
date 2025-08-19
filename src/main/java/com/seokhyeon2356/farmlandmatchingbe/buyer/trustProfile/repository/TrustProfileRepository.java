@@ -20,6 +20,11 @@ public interface TrustProfileRepository extends JpaRepository<TrustProfile, Long
     """)
     Optional<TrustProfile> findByBuyerId(@Param("buyerId") Long buyerId);
 
-    boolean existsByBuyerTrustProfile_BuyerId(Long buyerId);
+    @Query("""
+      select tp from TrustProfile tp
+      join fetch tp.buyerTrustProfile b
+      where b.buyerId = :buyerId
+    """)
+    Optional<TrustProfile> findByBuyerIdFetch(@Param("buyerId") Long buyerId);
 }
 

@@ -20,34 +20,39 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "buyer")
+@Table(
+        name = "buyer",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"buyerName","buyerNumber"})
+        }
+)
 public class Buyer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "buyer_id")
     private Long buyerId;
 
-    @Column(name = "buyer_name", nullable = false)
+    @Column(nullable = false)
     private String buyerName;
 
-    @Column(name = "buyer_age", nullable = false)
+    @Column(nullable = false)
     private Integer buyerAge;
 
-    @Column(name = "buyer_gender", nullable = false)
+    @Column(nullable = false)
     private String buyerGender;
 
-    @Column(name = "buyer_address", nullable = false)
+    @Column(nullable = false)
     private String buyerAddress;
 
-    @Column(name = "buyer_number", nullable = false)
+    @Column(nullable = false)
     private String buyerNumber;
 
-    @Column(name = "buyer_email", nullable = false)
+    @Column(nullable = false)
     private String buyerEmail;
 
-    @Column(name = "buyer_image")
     private String buyerImage;
+
+    private Integer trustScore;
 
     @OneToOne(mappedBy = "buyerTrustProfile", cascade = CascadeType.ALL)
     private TrustProfile trustProfile;

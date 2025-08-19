@@ -32,6 +32,8 @@ public class TrustProfile {
     private List<String> awards;
 
     private String experience;
+    private String experiencePeriod;
+    private String experienceDetail;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
@@ -40,7 +42,6 @@ public class TrustProfile {
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private List<String> wantTrade;
-
     private String rentPeriod;
     private String other;
 
@@ -53,7 +54,6 @@ public class TrustProfile {
     private String videoURL;
     private String sns;
     private String personal;
-    private String trustScore;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
