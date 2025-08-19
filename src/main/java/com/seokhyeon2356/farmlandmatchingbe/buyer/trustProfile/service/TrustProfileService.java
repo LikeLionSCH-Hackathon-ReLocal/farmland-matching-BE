@@ -86,7 +86,6 @@ public class TrustProfileService {
 
         var tp = trustProfileRepository.findByBuyerIdFetch(buyerId).orElse(null);
 
-        boolean hasAwards = tp != null && tp.getAwards() != null && !tp.getAwards().isEmpty();
         boolean hasSns = tp != null && tp.getSns() != null && !tp.getSns().isEmpty();
         boolean hasOneIntroduction = tp != null && tp.getOneIntroduction() != null && !tp.getOneIntroduction().isEmpty();
         boolean hasIntroduction = tp != null && tp.getIntroduction() != null && !tp.getIntroduction().isEmpty();
@@ -117,7 +116,13 @@ public class TrustProfileService {
                 snsRow,
                 awardsRow,
                 oneIntroductionRow,
-                introductionRow
+                introductionRow,
+                licCnt,
+                suggestCnt,
+                awardsCnt,
+                hasSns,
+                hasOneIntroduction,
+                hasIntroduction
         );
     }
 

@@ -7,6 +7,12 @@ public record TrustScore(
         ItemRow sns,
         ItemRow awards,
         ItemRow oneIntroduction,
-        ItemRow introduction
+        ItemRow introduction,
+        int licenseQuantity,
+        int suggestQuantity,
+        int awardsQuantity,
+        boolean hasSns,
+        boolean hasOneIntroduction,
+        boolean hasIntroduction
 ) {
 }
