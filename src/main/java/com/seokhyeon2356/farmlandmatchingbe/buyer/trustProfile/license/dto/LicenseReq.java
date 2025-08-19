@@ -12,4 +12,5 @@ public class LicenseReq {
     private Long licenseId;
     private String licenseName;
     private MultipartFile licenseFile;
+    private Boolean removeFile;
 }
