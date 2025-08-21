@@ -10,11 +10,21 @@ public record FarmlandListRes(
         Integer landArea,
         Integer landPrice,
         Double landLat,
-        Double landLng
+        Double landLng,
+        Double aiScore      // ✅ 추가
 ) {
-    public static FarmlandListRes from(Farmland f) {
+    // 기존 from(Farmland) 는 유지해도 되고, 아래 새 팩토리 추가
+    public static FarmlandListRes fromProjection(FarmlandListProjection p) {
         return new FarmlandListRes(
-                f.getLandId(), f.getLandName(), f.getLandCrop(), f.getLandAddress(), f.getLandArea(), f.getLandPrice(), f.getLandLat(), f.getLandLng()
+                p.getLandId(),
+                p.getLandName(),
+                p.getLandCrop(),
+                p.getLandAddress(),
+                p.getLandArea(),
+                p.getLandPrice(),
+                p.getLandLat(),
+                p.getLandLng(),
+                p.getAiMatchScore()  // null이면 "계산중"
         );
     }
 }

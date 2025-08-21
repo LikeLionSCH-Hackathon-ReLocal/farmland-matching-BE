@@ -1,11 +1,17 @@
 package com.seokhyeon2356.farmlandmatchingbe.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig {
 
     @Bean
@@ -19,5 +25,13 @@ public class WebConfig {
                         .allowCredentials(true);
             }
         };
+    }
+
+    @Bean
+    public WebClient aiClient(@Value("${ai.base-url:http://127.0.0.1:8000}") String baseUrl) {
+        return WebClient.builder()
+                .baseUrl(baseUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 }

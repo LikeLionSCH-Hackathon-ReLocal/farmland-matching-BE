@@ -12,6 +12,8 @@ public class BuyerRequestDto {
     private Integer buyerAge;
     private String buyerGender;
     private String buyerAddress;
+    private Double buyerLat;
+    private Double buyerLng;
     private String buyerNumber;
     private String buyerEmail;
     private MultipartFile buyerImage;

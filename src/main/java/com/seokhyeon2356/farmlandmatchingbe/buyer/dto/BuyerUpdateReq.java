@@ -12,5 +12,7 @@ public class BuyerUpdateReq {
     private String buyerNumber;
     private String buyerEmail;
     private String buyerAddress;
+    private Double buyerLat;
+    private Double buyerLng;
     private MultipartFile buyerImage;
 }

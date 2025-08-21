@@ -17,6 +17,8 @@ public class TrustProfileRes {
     private String experienceDetail;
     private String rentPeriod;
     private String other;
+    private Integer budget;
+    private String wantPeriod;
     private String oneIntroduction;
     private String introduction;
     private String videoURL;
@@ -34,6 +36,8 @@ public class TrustProfileRes {
         this.experienceDetail = trustProfile.getExperienceDetail();
         this.rentPeriod = trustProfile.getRentPeriod();
         this.other = trustProfile.getOther();
+        this.budget = trustProfile.getBudget();
+        this.wantPeriod = trustProfile.getWantPeriod();
         this.oneIntroduction = trustProfile.getOneIntroduction();
         this.introduction = trustProfile.getIntroduction();
         this.videoURL = trustProfile.getVideoURL();

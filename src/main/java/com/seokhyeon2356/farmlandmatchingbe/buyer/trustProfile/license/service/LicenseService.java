@@ -34,72 +34,64 @@ public class LicenseService {
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found: " + buyerId));
 
         List<License> existing = licenseRepository.findByBuyerLicense_BuyerId(buyerId);
-        Map<Long, License> existingMap = existing.stream()
+        Map<Long, License> byId = existing.stream()
                 .collect(Collectors.toMap(License::getLicenseId, l -> l));
+        // 이름으로도 찾을 수 있게 인덱스 (id가 누락될 수 있으므로)
+        Map<String, License> byName = existing.stream()
+                .collect(Collectors.toMap(License::getLicenseName, l -> l, (a, b) -> a));
 
         List<License> toPersist = new ArrayList<>();
         Set<Long> seenIds = new HashSet<>();
 
         for (LicenseReq req : requestList) {
-            if (req.getLicenseId() == null) {
-                // 신규
-                String fileUrl = null;
-                if (hasRealFile(req.getLicenseFile())) {
-                    String uploaded = supabaseService.uploadFile(req.getLicenseFile());
-                    if (uploaded != null && !uploaded.isBlank()) fileUrl = uploaded;
-                }
-                License created = License.builder()
-                        .licenseName(req.getLicenseName())
-                        .licenseFile(fileUrl)      // 파일 없으면 null(신규 항목이므로 OK)
+            License target = null;
+
+            // 1) id로 먼저 매칭
+            if (req.getLicenseId() != null) {
+                target = byId.get(req.getLicenseId());
+                if (target == null)
+                    throw new IllegalArgumentException("License not found: id=" + req.getLicenseId());
+                seenIds.add(target.getLicenseId());
+            }
+            // 2) id가 없으면 이름으로 매칭(같은 이름이면 업데이트로 간주)
+            else if (req.getLicenseName() != null) {
+                target = byName.get(req.getLicenseName());
+                if (target != null) seenIds.add(target.getLicenseId());
+            }
+
+            if (target == null) {
+                // 정말 신규
+                target = License.builder()
                         .buyerLicense(buyer)
                         .build();
-                toPersist.add(created);
-
-            } else {
-                // 수정
-                License target = existingMap.get(req.getLicenseId());
-                if (target == null) throw new IllegalArgumentException("License not found: id=" + req.getLicenseId());
-                seenIds.add(req.getLicenseId());
-
-                target.setLicenseName(req.getLicenseName());
-
-                // ✅ 진짜 새 파일이 온 경우에만 업로드 + 교체
-                if (Boolean.TRUE.equals(req.getRemoveFile())) {
-                    // 필요하면 실제 스토리지에서도 파일 삭제
-                    // supabaseService.deleteFileByUrl(target.getLicenseFile());
-                    target.setLicenseFile(null);
-
-                } else if (hasRealFile(req.getLicenseFile())) {
-                    // 새 파일 업로드가 있을 때만 교체
-                    String newUrl = supabaseService.uploadFile(req.getLicenseFile());
-                    if (newUrl != null && !newUrl.isBlank()) {
-                        // 필요하면 기존 파일 삭제
-                        // supabaseService.deleteFileByUrl(target.getLicenseFile());
-                        target.setLicenseFile(newUrl);
-                    }
-                    // 파일 업로드 실패 → 기존 URL 유지
-                }
-                // 파일 파트 없음 → 기존 URL 유지
-
-                toPersist.add(target);
             }
+
+            // 공통: 필드 반영
+            target.setLicenseName(req.getLicenseName());
+
+            // 파일은 새 파일 있을 때만 교체, 없으면 유지
+            if (hasRealFile(req.getLicenseFile())) {
+                String newUrl = supabaseService.uploadFile(req.getLicenseFile());
+                if (newUrl != null && !newUrl.isBlank()) {
+                    // 필요 시 기존 파일 삭제 로직
+                    // supabaseService.deleteFileByUrl(target.getLicenseFile());
+                    target.setLicenseFile(newUrl);
+                }
+            }
+
+            toPersist.add(target);
         }
-        // 요청에 없는 항목 삭제(기존 로직 유지)
+
+        // 요청에 없는 기존 항목 삭제
         List<License> toDelete = existing.stream()
                 .filter(l -> l.getLicenseId() != null && !seenIds.contains(l.getLicenseId()))
-                .collect(Collectors.toList());
+                .toList();
         if (!toDelete.isEmpty()) licenseRepository.deleteAllInBatch(toDelete);
 
         List<License> saved = licenseRepository.saveAll(toPersist);
-
-
         trustProfileService.recalcAndPersist(buyerId);
-
-
-
         return saved.stream().map(LicenseRes::new).toList();
     }
-
 
     private boolean hasRealFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return false;

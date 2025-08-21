@@ -45,12 +45,20 @@ public class TrustProfile {
     private String rentPeriod;
     private String other;
 
+    //예산?(00만원), 거래기간
+    private Integer budget;
+    private String wantPeriod;
+
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private List<String> equipment;
 
     private String oneIntroduction;
+
+    @Column(length = 1000)
     private String introduction;
+
+    @Column(length = 1000)
     private String videoURL;
     private String sns;
     private String personal;

@@ -51,6 +51,8 @@ public class TrustProfileService {
         tp.setExperience(req.getExperience());
         tp.setExperiencePeriod(req.getExperiencePeriod());
         tp.setExperienceDetail(req.getExperienceDetail());
+        tp.setBudget(req.getBudget());
+        tp.setWantPeriod(req.getWantPeriod());
         tp.setOneIntroduction(req.getOneIntroduction());
         tp.setIntroduction(req.getIntroduction());
         tp.setVideoURL(req.getVideoURL());
@@ -98,9 +100,9 @@ public class TrustProfileService {
         ItemRow licenseRow = new ItemRow("license", licCnt, 5, licCnt * 5);
         ItemRow suggestRow = new ItemRow("suggest", suggestCnt, 4, suggestCnt * 4);
         ItemRow awardsRow = new ItemRow("awards", awardsCnt, 7, awardsCnt * 7);
-        ItemRow snsRow = new ItemRow("sns", snsScore, 2, snsScore * 2);
-        ItemRow oneIntroductionRow = new ItemRow("oneIntroduction", oneIntroductionScore, 3, oneIntroductionScore * 3);
-        ItemRow introductionRow = new ItemRow("introduction", introductionScore, 5, introductionScore * 5);
+        ItemRow snsRow = new ItemRow("sns", snsScore, 10, snsScore * 2);
+        ItemRow oneIntroductionRow = new ItemRow("oneIntroduction", oneIntroductionScore, 10, oneIntroductionScore * 3);
+        ItemRow introductionRow = new ItemRow("introduction", introductionScore, 40, introductionScore * 5);
 
         int total = licenseRow.acquiredPoint()
                 + suggestRow.acquiredPoint()

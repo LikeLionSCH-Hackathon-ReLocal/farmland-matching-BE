@@ -1,5 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.entity;
 
+import com.seokhyeon2356.farmlandmatchingbe.ai.entity.AiMatchScore;
 import com.seokhyeon2356.farmlandmatchingbe.seller.entity.Seller;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,16 +40,16 @@ public class Farmland {
     private String ownerName;
     private Integer ownerAge;
     private String ownerAddress;
-    private String landWater;
-    private String landElec;
-    private String landMachine;
-    private String landStorage;
-    private String landHouse;
-    private String landFence;
-    private String landRoad;
-    private String landWellRoad;
-    private String landBus;
-    private String landCar;
+    private Boolean landWater;
+    private Boolean landElec;
+    private Boolean landMachine;
+    private Boolean landStorage;
+    private Boolean landHouse;
+    private Boolean landFence;
+    private Boolean landRoad;
+    private Boolean landWellRoad;
+    private Boolean landBus;
+    private Boolean landCar;
     private String landTrade;
     private String landMatch;
     private Integer landPrice;
@@ -71,4 +72,7 @@ public class Farmland {
     @JoinColumn(name = "sellerId")
     private Seller sellerFarmland;
 
+    //aiMatchScore
+    @OneToMany(mappedBy = "landAiMatchScore")
+    private List<AiMatchScore> landAiMatchScoreList = new ArrayList<>();
 }

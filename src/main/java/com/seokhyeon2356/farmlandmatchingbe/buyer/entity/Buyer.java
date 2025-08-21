@@ -1,5 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.buyer.entity;
 
+import com.seokhyeon2356.farmlandmatchingbe.ai.entity.AiMatchScore;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.entity.TrustProfile;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.license.entity.License;
 import com.seokhyeon2356.farmlandmatchingbe.buyer.trustProfile.suggest.entity.Suggest;
@@ -32,26 +33,15 @@ public class Buyer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long buyerId;
 
-    @Column(nullable = false)
     private String buyerName;
-
-    @Column(nullable = false)
     private Integer buyerAge;
-
-    @Column(nullable = false)
     private String buyerGender;
-
-    @Column(nullable = false)
     private String buyerAddress;
-
-    @Column(nullable = false)
+    private Double buyerLat;
+    private Double buyerLng;
     private String buyerNumber;
-
-    @Column(nullable = false)
     private String buyerEmail;
-
     private String buyerImage;
-
     private Integer trustScore;
 
     @OneToOne(mappedBy = "buyerTrustProfile", cascade = CascadeType.ALL)
@@ -66,4 +56,8 @@ public class Buyer {
     @OneToMany(mappedBy = "buyerSuggest", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
     private Set<Suggest> suggestList = new LinkedHashSet<>();
+
+    //aiMatchScore
+    @OneToMany(mappedBy = "buyerAiMatchScore")
+    private List<AiMatchScore> buyerAiMatchScoreList = new ArrayList<>();
 }

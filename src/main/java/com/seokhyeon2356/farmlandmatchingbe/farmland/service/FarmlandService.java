@@ -1,5 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.service;
 
+import com.seokhyeon2356.farmlandmatchingbe.ai.dto.FarmlandCreatedEvent;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.*;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.FarmlandRepository;
@@ -11,6 +12,7 @@ import com.seokhyeon2356.farmlandmatchingbe.seller.repository.SellerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class FarmlandService {
     private final FarmlandRepository farmlandRepository;
     private final SellerRepository sellerRepository;
     private final MatchingInfoRepository matchingInfoRepository;
+    private final ApplicationEventPublisher publisher;
 
     public Long saveFarmland(Long sellerId, FarmlandRequestDto dto) throws IOException {
 
@@ -46,6 +49,7 @@ public class FarmlandService {
                 .landNumber(dto.getLandNumber())
                 .landCrop(dto.getLandCrop())
                 .landArea(dto.getLandArea())
+                .landAreaha(dto.getLandAreaha())
                 .landLat(dto.getLandLat())
                 .landLng(dto.getLandLng())
                 .soiltype(dto.getSoiltype())
@@ -78,6 +82,9 @@ public class FarmlandService {
 
         // 3. DB 저장
         farmlandRepository.save(farmland);
+
+        //저장하면 ai가 돌아서 ai score 저장
+        publisher.publishEvent(new FarmlandCreatedEvent(farmland.getLandId()));
 
         return farmland.getLandId();
     }
@@ -230,8 +237,10 @@ public class FarmlandService {
 
     //농지 전체보기(구매자 사이트)
     @Transactional
-    public Page<FarmlandListRes> getFarmlandList(Pageable pageable) {
-        return farmlandRepository.findAll(pageable).map(FarmlandListRes::from);
+    public List<FarmlandListRes> getFarmlandList(Long buyerId) {
+        return farmlandRepository.findAllWithAiScore(buyerId).stream()
+                .map(FarmlandListRes::fromProjection)
+                .toList();
     }
 
     //농지 상세보기 (구매자 사이트)
