@@ -22,6 +22,8 @@ public class TrustProfileReq {
     private String experience;
     private String experiencePeriod;
     private String experienceDetail;
+    private Integer budget;
+    private String wantPeriod;
     private String rentPeriod;
     private String other;
     private String oneIntroduction;

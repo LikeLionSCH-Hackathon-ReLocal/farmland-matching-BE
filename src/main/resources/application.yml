@@ -26,6 +26,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  ai:
+    base-url: http://127.0.0.1:8000   # AI 서버 주소
+    connect-timeout-ms: 3000
+    read-timeout-ms: 15000
+
 logging:
   level:
     org.hibernate.SQL: DEBUG          # 실행되는 SQL 쿼리 출력

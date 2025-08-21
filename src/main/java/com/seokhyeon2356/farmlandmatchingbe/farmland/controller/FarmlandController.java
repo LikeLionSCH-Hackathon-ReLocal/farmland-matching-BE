@@ -102,9 +102,9 @@ public class FarmlandController {
 
     //그냥 모든 농지 보이기(구매자 사이트)
     @GetMapping("/farmland")
-    public Page<FarmlandListRes> getAllFarmland(Pageable pageable) {
+    public List<FarmlandListRes> getAllFarmland() {
 
-        return farmlandService.getFarmlandList(pageable);
+        return farmlandService.getFarmlandList(1L);
     }
 
     //(구매자 사이트)농지 상세보기

@@ -28,6 +28,8 @@ public class BuyerService {
                 .buyerAge(buyerRequestDto.getBuyerAge())
                 .buyerGender(buyerRequestDto.getBuyerGender())
                 .buyerAddress(buyerRequestDto.getBuyerAddress())
+                .buyerLat(buyerRequestDto.getBuyerLat())
+                .buyerLng(buyerRequestDto.getBuyerLng())
                 .buyerNumber(buyerRequestDto.getBuyerNumber())
                 .buyerEmail(buyerRequestDto.getBuyerEmail())
                 .buyerImage(buyerImageUrl)
@@ -71,6 +73,12 @@ public class BuyerService {
         }
         if (buyerUpdateReq.getBuyerAddress() != null) {
             buyer.setBuyerAddress(buyerUpdateReq.getBuyerAddress());
+        }
+        if (buyerUpdateReq.getBuyerLat() != null) {
+            buyer.setBuyerLat(buyerUpdateReq.getBuyerLat());
+        }
+        if (buyerUpdateReq.getBuyerLng() != null) {
+            buyer.setBuyerLng(buyerUpdateReq.getBuyerLng());
         }
         if (buyerUpdateReq.getBuyerImage() != null) {
             buyer.setBuyerImage(buyerUpdateImageUrl);

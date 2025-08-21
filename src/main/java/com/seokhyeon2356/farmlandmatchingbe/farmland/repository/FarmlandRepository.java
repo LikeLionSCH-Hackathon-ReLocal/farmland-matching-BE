@@ -1,5 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.repository;
 
+import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.FarmlandListProjection;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.SellerFarmlandListRes;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,5 +29,22 @@ public interface FarmlandRepository extends JpaRepository<Farmland, Long> {
            order by f.landRegisterDate desc
            """)
         List<SellerFarmlandListRes> findAllFarmlandByseller(@Param("sellerId") Long sellerId);
+
+    @Query("""
+      select f.landId as landId,
+             f.landName as landName,
+             f.landCrop as landCrop,
+             f.landAddress as landAddress,
+             f.landArea as landArea,
+             f.landPrice as landPrice,
+             f.landLat as landLat,
+             f.landLng as landLng,
+             s.aiMatchScore as aiScore
+      from Farmland f
+      left join AiMatchScore s
+             on s.landAiMatchScore = f and s.buyerAiMatchScore.buyerId = :buyerId
+      order by f.landId desc
+    """)
+    List<FarmlandListProjection> findAllWithAiScore(@Param("buyerId") Long buyerId);
 }
 

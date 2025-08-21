@@ -10,7 +10,7 @@ public record MyAppliedLandDto(
 
         Long landId,
         String landName,
-        String landArress,
+        String landAddress,
         String landCrop,
         LocalDate landRegisterDate,
         String landImage,
