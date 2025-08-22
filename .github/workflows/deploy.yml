@@ -36,22 +36,30 @@ jobs:
           push: true
           tags: ${{ env.IMAGE }}
 
+      - name: Prepare SSH key
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo ok" || exit 1
+
       - name: Copy infra to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "infra/*"
-          target: "/opt/hackathon"
-          strip_components: 1
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            key_path: ~/.ssh/id_rsa      # ← 중요: key가 아니라 key_path 사용
+            source: "infra/*"
+            target: "/opt/hackathon"
+            strip_components: 1
 
       - name: Deploy on server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key_path: ~/.ssh/id_rsa      # ← 동일하게 key_path
           script: |
             # 1) 호스트 Nginx(기존) 중지/비활성화 (80 포트 충돌 방지)
             sudo systemctl stop nginx || true
