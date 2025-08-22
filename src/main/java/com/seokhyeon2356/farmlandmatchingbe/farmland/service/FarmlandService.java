@@ -1,6 +1,6 @@
 package com.seokhyeon2356.farmlandmatchingbe.farmland.service;
 
-import com.seokhyeon2356.farmlandmatchingbe.ai.dto.FarmlandCreatedEvent;
+import com.seokhyeon2356.farmlandmatchingbe.ai.repo.AiMatchScoreRepo;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.dto.*;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.FarmlandRepository;
@@ -10,11 +10,11 @@ import com.seokhyeon2356.farmlandmatchingbe.farmland.repository.MatchingInfoRepo
 import com.seokhyeon2356.farmlandmatchingbe.seller.entity.Seller;
 import com.seokhyeon2356.farmlandmatchingbe.seller.repository.SellerRepository;
 import com.seokhyeon2356.farmlandmatchingbe.supabase.service.SupabaseService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class FarmlandService {
@@ -31,7 +32,9 @@ public class FarmlandService {
     private final SellerRepository sellerRepository;
     private final MatchingInfoRepository matchingInfoRepository;
     private final ApplicationEventPublisher publisher;
+    private final AiMatchScoreRepo aiMatchScoreRepo;
 
+    @Transactional
     public Long saveFarmland(Long sellerId, FarmlandRequestDto dto) throws IOException {
 
         Seller seller = sellerRepository.findById(sellerId)
@@ -82,9 +85,6 @@ public class FarmlandService {
 
         // 3. DB 저장
         farmlandRepository.save(farmland);
-
-        //저장하면 ai가 돌아서 ai score 저장
-        publisher.publishEvent(new FarmlandCreatedEvent(farmland.getLandId()));
 
         return farmland.getLandId();
     }
@@ -237,9 +237,13 @@ public class FarmlandService {
 
     //농지 전체보기(구매자 사이트)
     @Transactional
-    public List<FarmlandListRes> getFarmlandList(Long buyerId) {
+    public List<FarmlandListRes> getFarmlandsWithScore(Long buyerId) {
         return farmlandRepository.findAllWithAiScore(buyerId).stream()
-                .map(FarmlandListRes::fromProjection)
+                .map(r -> new FarmlandListRes(
+                        r.getLandId(), r.getLandName(), r.getLandCrop(),
+                        r.getLandAddress(), r.getLandArea(), r.getLandPrice(),
+                        r.getLandLat(), r.getLandLng(), r.getAiMatchScore() // ← 채워짐 (없으면 null)
+                ))
                 .toList();
     }
 
@@ -283,6 +287,21 @@ public class FarmlandService {
                 f.getLandWhy(),
                 f.getLandComent(),
                 f.getLandImage()
+        );
+    }
+
+    //농지 상세보기 (aiScore 보이는 곳)
+    @Transactional
+    public MatchScoreDetailDto getMatchScoreDetail(long buyerId, long farmlandId) {
+        var row = aiMatchScoreRepo.findByLandIdAndBuyerId(farmlandId, buyerId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "매칭 점수가 없습니다. buyerId=%d, landId=%d".formatted(buyerId, farmlandId)));
+
+        return new MatchScoreDetailDto(
+                farmlandId,
+                buyerId,
+                row.getAiMatchScore(),
+                row.getAiScoreDetail()   // JsonNode 그대로 반환
         );
     }
 }

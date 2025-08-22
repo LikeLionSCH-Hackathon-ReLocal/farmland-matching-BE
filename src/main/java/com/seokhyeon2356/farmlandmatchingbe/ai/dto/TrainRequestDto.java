@@ -8,6 +8,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MatchRequestDto {
-    @JsonProperty("buyers") List<MatchBuyerDto> buyers;
+public class TrainRequestDto {
+    @JsonProperty("farmlands") List<AiFarmlandDto> farmlands;
 }

@@ -28,10 +28,7 @@ public class WebConfig {
     }
 
     @Bean
-    public WebClient aiClient(@Value("${ai.base-url:http://127.0.0.1:8000}") String baseUrl) {
-        return WebClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+    public WebClient aiClient(@Value("${ai.base-url}") String base) {
+        return WebClient.builder().baseUrl(base).build();
     }
 }

@@ -71,8 +71,4 @@ public class Farmland {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sellerId")
     private Seller sellerFarmland;
-
-    //aiMatchScore
-    @OneToMany(mappedBy = "landAiMatchScore")
-    private List<AiMatchScore> landAiMatchScoreList = new ArrayList<>();
 }

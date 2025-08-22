@@ -1,34 +1,36 @@
 package com.seokhyeon2356.farmlandmatchingbe.ai.entity;
 
-import com.seokhyeon2356.farmlandmatchingbe.buyer.entity.Buyer;
-import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Getter
 @Setter
 @Table(
-        name = "aiMatchScore",
+        name = "aimatchscore",
         uniqueConstraints = @UniqueConstraint(columnNames = {"landId","buyerId"})
 )
 public class AiMatchScore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "aimatchscoreid")
     private Long aiMatchScoreId;
 
+    @Column(name = "aimatchscore")
     private Double aiMatchScore;
 
-    @Column(columnDefinition = "jsonb")
-    private String aiScoreDetail;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "aiscoredetail")
+    private JsonNode aiScoreDetail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "landId")
-    private Farmland landAiMatchScore;
+    @Column(name = "landid")
+    private Long landId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyerId")
-    private Buyer buyerAiMatchScore;
+    @Column(name = "buyerid")
+    private Long buyerId;
 }

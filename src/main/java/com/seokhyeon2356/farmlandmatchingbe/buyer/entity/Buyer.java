@@ -56,8 +56,4 @@ public class Buyer {
     @OneToMany(mappedBy = "buyerSuggest", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
     private Set<Suggest> suggestList = new LinkedHashSet<>();
-
-    //aiMatchScore
-    @OneToMany(mappedBy = "buyerAiMatchScore")
-    private List<AiMatchScore> buyerAiMatchScoreList = new ArrayList<>();
 }

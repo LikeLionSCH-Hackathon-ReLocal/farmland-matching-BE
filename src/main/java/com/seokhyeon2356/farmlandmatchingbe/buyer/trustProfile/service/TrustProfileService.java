@@ -100,9 +100,9 @@ public class TrustProfileService {
         ItemRow licenseRow = new ItemRow("license", licCnt, 5, licCnt * 5);
         ItemRow suggestRow = new ItemRow("suggest", suggestCnt, 4, suggestCnt * 4);
         ItemRow awardsRow = new ItemRow("awards", awardsCnt, 7, awardsCnt * 7);
-        ItemRow snsRow = new ItemRow("sns", snsScore, 10, snsScore * 2);
-        ItemRow oneIntroductionRow = new ItemRow("oneIntroduction", oneIntroductionScore, 10, oneIntroductionScore * 3);
-        ItemRow introductionRow = new ItemRow("introduction", introductionScore, 40, introductionScore * 5);
+        ItemRow snsRow = new ItemRow("sns", snsScore, 10, snsScore * 10);
+        ItemRow oneIntroductionRow = new ItemRow("oneIntroduction", oneIntroductionScore, 10, oneIntroductionScore * 10);
+        ItemRow introductionRow = new ItemRow("introduction", introductionScore, 30, introductionScore * 30);
 
         int total = licenseRow.acquiredPoint()
                 + suggestRow.acquiredPoint()
