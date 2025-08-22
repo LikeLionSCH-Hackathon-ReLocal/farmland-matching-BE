@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/${DB_NAME:farmland}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD}}
+
+supabase:
+  url: ${SUPABASE_URL}
+  key: ${SUPABASE_KEY}
+  bucket: ${SUPABASE_BUCKET}

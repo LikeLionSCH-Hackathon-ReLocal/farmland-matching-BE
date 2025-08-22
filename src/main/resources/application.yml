@@ -5,16 +5,6 @@ server:
 spring:
   application:
     name: farmland-matching-BE
-
-  config:
-    import: optional:application-secret.yml
-
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/${db.name}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true # ?? ??
-    username: ${db.username}
-    password: ${db.password}
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,32 +15,24 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  mvc:
+    cors:
+      mappings:
+        "/**":
+          allowed-origins:
+            - http://localhost:3000
+            - http://43.203.207.57
+          allowed-methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+          allowed-headers: ["*"]
+          allow-credentials: false
+          max-age: 3600
 
 ai:
-  base-url: http://127.0.0.1:8000   # AI 서버 주소
+  base-url: ${AI_BASE_URL:http://host.docker.internal:8000}
   connect-timeout-ms: 3000
   read-timeout-ms: 15000
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG          # 실행되는 SQL 쿼리 출력
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE   # 쿼리 파라미터 바인딩 값 출력
-
-  mvc:
-    cors:
-      mappings:
-        "[/**]":
-          allowed-origins:
-            - http://localhost:8080
-            - http://localhost:3000
-          allowed-methods:
-            - GET
-            - POST
-            - PUT
-            - PATCH
-            - DELETE
-            - OPTIONS
-          allowed-headers:
-            - "*"
-          allow-credentials: false         # 쿠키/세션 안 씀
-          max-age: 3600
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

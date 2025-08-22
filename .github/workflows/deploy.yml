@@ -1,0 +1,101 @@
+name: CI/CD to EC2 (Docker + Nginx)
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image name
+        run: echo "IMAGE=ghcr.io/${{ github.repository }}:latest" >> $GITHUB_ENV
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.IMAGE }}
+
+      - name: Copy infra to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "infra/*"
+          target: "/opt/hackathon"
+          strip_components: 1
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # 1) 호스트 Nginx(기존) 중지/비활성화 (80 포트 충돌 방지)
+            sudo systemctl stop nginx || true
+            sudo systemctl disable nginx || true
+
+            # 2) Docker/Compose 설치
+            if ! command -v docker >/dev/null 2>&1; then
+              (sudo dnf -y install docker || sudo yum -y install docker)
+              sudo systemctl enable --now docker
+              sudo usermod -aG docker ec2-user || true
+            fi
+            if ! docker compose version >/dev/null 2>&1; then
+              sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+              sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose || true
+            fi
+
+            # 3) 디렉토리/환경파일 준비
+            sudo mkdir -p /opt/hackathon
+            cd /opt/hackathon
+
+            cat > .env << 'EOF'
+            SPRING_PROFILES_ACTIVE=prod
+
+            # --- DB 연결 ---
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
+
+            # --- Supabase ---
+            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
+
+            # --- Java ---
+            JAVA_OPTS=-Xms256m -Xmx512m
+            EOF
+
+            # 4) GHCR 로그인(서버에서 이미지 pull)
+            echo ${{ secrets.GHCR_READ_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+            # 5) compose 이미지 태그 치환 + 배포
+            sed -i "s|IMAGE_PLACEHOLDER|${{ env.IMAGE }}|g" docker-compose.yml
+            (docker compose pull || docker-compose pull)
+            (docker compose up -d || docker-compose up -d)
+
+            docker image prune -f || true
