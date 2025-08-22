@@ -17,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
@@ -26,10 +26,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-  ai:
-    base-url: http://127.0.0.1:8000   # AI 서버 주소
-    connect-timeout-ms: 3000
-    read-timeout-ms: 15000
+ai:
+  base-url: http://127.0.0.1:8000   # AI 서버 주소
+  connect-timeout-ms: 3000
+  read-timeout-ms: 15000
 
 logging:
   level:

@@ -11,7 +11,7 @@ public record FarmlandListRes(
         Integer landPrice,
         Double landLat,
         Double landLng,
-        Double aiScore      // ✅ 추가
+        Double aiMatchScore      // ✅ 추가
 ) {
     // 기존 from(Farmland) 는 유지해도 되고, 아래 새 팩토리 추가
     public static FarmlandListRes fromProjection(FarmlandListProjection p) {

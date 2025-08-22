@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AiMatchScoreRepo extends JpaRepository<AiMatchScore, Long> {
-    Optional<AiMatchScore> findByLandAiMatchScoreAndBuyerAiMatchScore(Farmland farmland, Buyer buyer);
+    Optional<AiMatchScore> findByLandIdAndBuyerId(Long landId, Long buyerId);
 }

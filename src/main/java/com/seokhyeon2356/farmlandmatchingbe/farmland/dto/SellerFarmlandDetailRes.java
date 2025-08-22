@@ -3,6 +3,7 @@ package com.seokhyeon2356.farmlandmatchingbe.farmland.dto;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.Farmland;
 import com.seokhyeon2356.farmlandmatchingbe.farmland.entity.MatchingInfo;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +18,10 @@ public record SellerFarmlandDetailRes(
         Double landLng,
         String landCrop,
         Integer landArea,
+        Double landAreaha,
         String soiltype,
         String waterSource,
+        LocalDate landRegisterDate,
         String ownerName,
         Integer ownerAge,
         String ownerAddress,
@@ -61,8 +64,10 @@ public record SellerFarmlandDetailRes(
                 f.getLandLng(),
                 f.getLandCrop(),
                 f.getLandArea(),
+                f.getLandAreaha(),
                 f.getSoiltype(),
                 f.getWaterSource(),
+                f.getLandRegisterDate(),
                 f.getOwnerName(),
                 f.getOwnerAge(),
                 f.getOwnerAddress(),

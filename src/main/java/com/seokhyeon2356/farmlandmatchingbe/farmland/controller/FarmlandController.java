@@ -104,7 +104,7 @@ public class FarmlandController {
     @GetMapping("/farmland")
     public List<FarmlandListRes> getAllFarmland() {
 
-        return farmlandService.getFarmlandList(1L);
+        return farmlandService.getFarmlandsWithScore(1L);
     }
 
     //(구매자 사이트)농지 상세보기
@@ -114,5 +114,18 @@ public class FarmlandController {
         return farmlandService.getFarmlandDetail(landId);
     }
 
-    //
+    //농지 상세보기 (ai 매칭부분)
+    @GetMapping("/farmland-detail-matchScore/{buyerId}/{landId}")
+    public ResponseEntity<MatchScoreDetailDto> getDetailMatchScore(
+            @PathVariable long buyerId,
+            @PathVariable long landId) {
+
+        try {
+            MatchScoreDetailDto dto = farmlandService.getMatchScoreDetail(buyerId, landId);
+            return ResponseEntity.ok(dto);
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            // 점수가 아직 저장되지 않은 케이스 → 204로 처리
+            return ResponseEntity.noContent().build();
+        }
+    }
 }
