@@ -20,6 +20,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verify files exist (before upload)
+        run: |
+          echo "PWD: $(pwd)"
+          ls -al
+          test -f ./docker-compose.yml || (echo "::error::missing docker-compose.yml at repo root" && exit 1)
+          test -f ./infra/nginx/app.conf || (echo "::error::missing infra/nginx/app.conf" && exit 1)
+
+      - name: Prepare dirs on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key:      ${{ secrets.SSH_KEY }}
+          script: |
+            sudo mkdir -p /opt/hackathon/nginx
+            sudo chown -R $USER:$USER /opt/hackathon
+
+      - name: Upload compose to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key:      ${{ secrets.SSH_KEY }}
+          source: "./docker-compose.yml"         # ← 레포 루트의 정확한 경로
+          target: "/opt/hackathon/"
+          overwrite: true
+
+      - name: Upload nginx conf to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/nginx/app.conf"       # ← 레포 내 실제 경로
+          target: "/opt/hackathon/nginx/"
+          overwrite: true
+
+
       - name: Login to GHCR (push)
         uses: docker/login-action@v3
         with:
