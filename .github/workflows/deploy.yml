@@ -93,56 +93,72 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: APP_DIR
+          envs: APP_DIR                          # APP_DIR=/opt/hackathon 을 job env로 지정해둔 상태 가정
           script_stop: true
+          command_timeout: 20m
           script: |
-            set -e
-            # 1) 디렉터리 준비
+            set -Eeuo pipefail
+            trap 'echo "[ERR] line:$LINENO exit:$?"' ERR
+
+            echo "[INFO] APP_DIR=$APP_DIR"
             sudo mkdir -p "$APP_DIR/nginx" "$APP_DIR/fe-build"
             sudo chown -R $USER:$USER "$APP_DIR"
             cd "$APP_DIR"
 
-            # 2) .env 생성(두 세트 모두 넣어서 변수 불일치 방지)
-            cat > .env <<'ENV'
-            TZ=Asia/Seoul
-            COMPOSE_PROJECT_NAME=hackathon
-            GHCR_OWNER=${{ github.repository_owner }}
+            # --- .env를 안전하게 echo로 작성 (heredoc 금지) ---
+            : > .env
+            echo "TZ=Asia/Seoul" >> .env
+            echo "COMPOSE_PROJECT_NAME=hackathon" >> .env
+            echo "GHCR_OWNER=${{ github.repository_owner }}" >> .env
 
-            # --- DB (두 이름 세트 모두 채움) ---
-            POSTGRES_DB=${{ secrets.DB_NAME }}
-            POSTGRES_USER=${{ secrets.DB_USER }}
-            POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            # DB (두 이름 세트 모두 채움: POSTGRES_* / DB_*)
+            echo "POSTGRES_DB=${{ secrets.DB_NAME }}" >> .env
+            echo "POSTGRES_USER=${{ secrets.DB_USER }}" >> .env
+            echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
 
-            # --- BE ---
-            APP_PORT=8080
-            SPRING_PROFILES_ACTIVE=prod
-            SERVER_SERVLET_CONTEXT_PATH=/farmland
-            SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}
-            SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
-            SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
-            JAVA_OPTS=-Xms256m -Xmx512m
+            # BE
+            echo "APP_PORT=8080" >> .env
+            echo "SPRING_PROFILES_ACTIVE=prod" >> .env
+            echo "SERVER_SERVLET_CONTEXT_PATH=/farmland" >> .env
+            echo "SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}" >> .env
+            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}" >> .env
+            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "JAVA_OPTS=-Xms256m -Xmx512m" >> .env
 
-            # --- Supabase ---
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
-            SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}
-            ENV
+            # Supabase
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+            echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+            echo "SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}" >> .env
 
-            # 3) 네트워크/로그인
+            echo "[INFO] .env written ($(wc -l < .env) lines)"
+
+            # docker compose 유무 감지
+            if docker compose version >/dev/null 2>&1; then
+              DC="docker compose"
+            elif docker-compose version >/dev/null 2>&1; then
+              DC="docker-compose"
+            else
+              echo "[ERROR] docker compose not installed"; exit 3
+            fi
+            echo "[INFO] Using: $DC"
+
             docker network create app-net 2>/dev/null || true
+
+            # GHCR(private) pull 필요시
             if [ -n "${{ secrets.GHCR_READ_TOKEN }}" ] && [ -n "${{ secrets.GHCR_USERNAME }}" ]; then
               echo "${{ secrets.GHCR_READ_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
             fi
 
-            # 4) 서비스 이름에 의존하지 않게 전체 pull/up
-            docker compose config --services
-            docker compose pull
-            docker compose up -d
+            echo "[INFO] services:"; $DC config --services
+            echo "[INFO] first 80 lines of resolved config:"; $DC config | sed -n '1,80p'
 
-            # 5) 상태 확인
-            docker compose ps
-            docker logs --tail=80 hackathon-app || true
+            $DC pull
+            $DC up -d
+
+            $DC ps
+            docker logs --tail=120 hackathon-app || true
+
             docker image prune -f
