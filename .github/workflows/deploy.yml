@@ -151,7 +151,25 @@ jobs:
             if [ -n "${{ secrets.GHCR_READ_TOKEN }}" ] && [ -n "${{ secrets.GHCR_USERNAME }}" ]; then
               echo "${{ secrets.GHCR_READ_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
             fi
+            
+            # --- nginx 이름 충돌 사전 정리 ---
+            if docker ps -a --format '{{.Names}}' | grep -qx hackathon-nginx; then
+              label=$(docker inspect -f '{{ index .Config.Labels "com.docker.compose.project" }}' hackathon-nginx || true)
 
+              # (옵션) 정적파일/설정 백업
+              mkdir -p fe-build nginx
+              docker cp hackathon-nginx:/usr/share/nginx/html/. ./fe-build/ >/dev/null 2>&1 || true
+              docker cp hackathon-nginx:/etc/nginx/conf.d/default.conf ./nginx/app.conf >/dev/null 2>&1 || true
+
+              if [ "$label" = "hackathon" ]; then
+                echo "[INFO] removing compose-managed nginx"
+                $DC rm -sf nginx || true
+              else
+                echo "[INFO] removing non-compose nginx"
+                docker rm -f hackathon-nginx || true
+              fi
+            fi
+  
             echo "[INFO] services:"; $DC config --services
             echo "[INFO] first 80 lines of resolved config:"; $DC config | sed -n '1,80p'
 
