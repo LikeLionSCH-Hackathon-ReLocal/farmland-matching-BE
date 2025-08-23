@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class AiController {
     private final AiService aiService;
     private final AiMatchScoreRepo aiMatchScoreRepo;

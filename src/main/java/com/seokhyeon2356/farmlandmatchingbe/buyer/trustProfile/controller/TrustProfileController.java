@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class TrustProfileController {
 
     private final TrustProfileService trustProfileService;

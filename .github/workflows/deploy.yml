@@ -1,122 +1,101 @@
-name: CI/CD to EC2 (Docker + Nginx)
+name: BE CI/CD to EC2 (Docker + GHCR + Secrets)
 
 on:
   push:
     branches: [ "main", "develop" ]
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/farmland-matching-be
+      TAG_LATEST: latest
+      APP_DIR: /opt/hackathon
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set image name
-        run: echo "IMAGE=ghcr.io/${REPO,,}:latest" >> $GITHUB_ENV   # 👈 소문자 변환
-        env:
-          REPO: ${{ github.repository }}
-
-      - name: Login to GHCR
+      - name: Login to GHCR (push)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & Push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ env.IMAGE }}
+      - name: Build & Push image
+        run: |
+          docker build -t $IMAGE_NAME:$TAG_LATEST .
+          docker push $IMAGE_NAME:$TAG_LATEST
 
-      - name: Test SSH (optional)
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: echo "ssh-ok"
-
-      - name: Prepare remote dir
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            sudo mkdir -p /opt/hackathon
-            sudo chown ec2-user:ec2-user /opt/hackathon
-
-      - name: Copy infra to server
+      # 인프라 파일 전송(docker-compose.yml, nginx conf)
+      - name: Upload infra to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host:     ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}   # ← key_path 말고 이걸 사용
-          source: "infra/*"
-          target: "/opt/hackathon"
-          strip_components: 1
+          key:      ${{ secrets.SSH_KEY }}
+          source: |
+            docker-compose.yml
+            nginx/app.conf
+          target: ${{ env.APP_DIR }}
           overwrite: true
 
-      - name: Deploy on server
-        uses: appleboy/ssh-action@v1.2.0
+      # 원격 배포: .env 생성(Secrets 주입) -> compose pull/up
+      - name: Remote deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host:     ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}   # ← 동일
+          key:      ${{ secrets.SSH_KEY }}
+          script_stop: true
           script: |
-            # 1) 호스트 Nginx(기존) 중지/비활성화 (80 포트 충돌 방지)
-            sudo systemctl stop nginx || true
-            sudo systemctl disable nginx || true
+            set -e
+            mkdir -p $APP_DIR/nginx $APP_DIR/fe-build
+            cd $APP_DIR
 
-            # 2) Docker/Compose 설치
-            if ! command -v docker >/dev/null 2>&1; then
-              (sudo dnf -y install docker || sudo yum -y install docker)
-              sudo systemctl enable --now docker
-              sudo usermod -aG docker ec2-user || true
-            fi
-            if ! docker compose version >/dev/null 2>&1; then
-              sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-              sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose || true
-            fi
+            # .env 생성(Secrets 반영)
+            cat > .env <<'ENV'
+            TZ=Asia/Seoul
+            COMPOSE_PROJECT_NAME=hackathon
+            GHCR_OWNER=${{ github.repository_owner }}
 
-            # 3) 디렉토리/환경파일 준비
-            sudo mkdir -p /opt/hackathon
-            cd /opt/hackathon
+            # DB
+            POSTGRES_DB=${{ secrets.DB_NAME }}
+            POSTGRES_USER=${{ secrets.DB_USER }}
+            POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
 
-            cat > .env << 'EOF'
+            # BE
+            APP_PORT=8080
             SPRING_PROFILES_ACTIVE=prod
+            SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+            SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+            SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+            JAVA_OPTS=-Xms256m -Xmx512m
 
-            # --- DB 연결 ---
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}
-            SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
-            SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
-
-            # --- Supabase ---
+            # Supabase (필요 시 BE에서 사용)
             SUPABASE_URL=${{ secrets.SUPABASE_URL }}
             SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
+            SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}
+            ENV
 
-            # --- Java ---
-            JAVA_OPTS=-Xms256m -Xmx512m
-            EOF
+            # 네트워크 준비
+            docker network create app-net 2>/dev/null || true
 
-            # 4) GHCR 로그인(서버에서 이미지 pull)
-            echo ${{ secrets.GHCR_READ_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            # GHCR 로그인 (private pull이 필요한 경우)
+            if [ -n "${{ secrets.GHCR_USERNAME }}" ] && [ -n "${{ secrets.GHCR_READ_TOKEN }}" ]; then
+              echo "${{ secrets.GHCR_READ_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            fi
 
-            # 5) compose 이미지 태그 치환 + 배포
-            sed -i "s|IMAGE_PLACEHOLDER|${{ env.IMAGE }}|g" docker-compose.yml
-            (docker compose pull || docker-compose pull)
-            (docker compose up -d || docker-compose up -d)
+            # 최신 이미지 받고 기동
+            docker compose pull backend
+            docker compose up -d db backend nginx
+            docker compose ps
+            docker logs --tail=50 hackathon-app || true
 
-            docker image prune -f || true
+            # 청소
+            docker image prune -f
