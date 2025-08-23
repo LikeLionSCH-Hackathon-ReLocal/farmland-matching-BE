@@ -130,7 +130,7 @@ jobs:
 
             # Supabase
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
-            echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+            echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
             echo "SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}" >> .env
 
             echo "[INFO] .env written ($(wc -l < .env) lines)"
