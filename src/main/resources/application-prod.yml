@@ -7,5 +7,5 @@ spring:
 
 supabase:
   url: ${SUPABASE_URL}
-  key: ${SUPABASE_KEY}
+  anon-key: ${SUPABASE_ANON_KEY:${SUPABASE_KEY}}
   bucket: ${SUPABASE_BUCKET}
