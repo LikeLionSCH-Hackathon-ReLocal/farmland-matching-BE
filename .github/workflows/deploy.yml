@@ -7,14 +7,13 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      APP_DIR: /opt/hackathon
+      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/farmland-matching-be
+      TAG_LATEST: latest
     permissions:
       contents: read
       packages: write
-
-    env:
-      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/farmland-matching-be
-      TAG_LATEST: latest
-      APP_DIR: /opt/hackathon
 
     steps:
       - name: Checkout
@@ -91,53 +90,48 @@ jobs:
       - name: Remote deploy on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host:     ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key:      ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: APP_DIR                     # ← 이 줄이 포인트! (원격에 export)
           script_stop: true
           script: |
             set -e
-            mkdir -p $APP_DIR/nginx $APP_DIR/fe-build
-            cd $APP_DIR
+            sudo mkdir -p "$APP_DIR/nginx" "$APP_DIR/fe-build"
+            sudo chown -R $USER:$USER "$APP_DIR"
+            cd "$APP_DIR"
 
-            # .env 생성(Secrets 반영)
+            # .env 생성
             cat > .env <<'ENV'
             TZ=Asia/Seoul
             COMPOSE_PROJECT_NAME=hackathon
             GHCR_OWNER=${{ github.repository_owner }}
 
-            # DB
             POSTGRES_DB=${{ secrets.DB_NAME }}
             POSTGRES_USER=${{ secrets.DB_USER }}
             POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
 
-            # BE
             APP_PORT=8080
             SPRING_PROFILES_ACTIVE=prod
-            SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
-            SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
-            SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+            SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${{ secrets.DB_NAME }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
             JAVA_OPTS=-Xms256m -Xmx512m
 
-            # Supabase (필요 시 BE에서 사용)
             SUPABASE_URL=${{ secrets.SUPABASE_URL }}
             SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
             SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}
             ENV
 
-            # 네트워크 준비
             docker network create app-net 2>/dev/null || true
 
-            # GHCR 로그인 (private pull이 필요한 경우)
-            if [ -n "${{ secrets.GHCR_USERNAME }}" ] && [ -n "${{ secrets.GHCR_READ_TOKEN }}" ]; then
+            # GHCR(private) pull이 필요하면 로그인
+            if [ -n "${{ secrets.GHCR_READ_TOKEN }}" ] && [ -n "${{ secrets.GHCR_USERNAME }}" ]; then
               echo "${{ secrets.GHCR_READ_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
             fi
 
-            # 최신 이미지 받고 기동
             docker compose pull backend
             docker compose up -d db backend nginx
             docker compose ps
             docker logs --tail=50 hackathon-app || true
-
-            # 청소
             docker image prune -f
