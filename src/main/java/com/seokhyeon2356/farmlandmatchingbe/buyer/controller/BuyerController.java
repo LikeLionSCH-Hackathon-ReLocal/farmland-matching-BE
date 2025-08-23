@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class BuyerController {
 
     private final BuyerService buyerService;
