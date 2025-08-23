@@ -22,33 +22,10 @@ jobs:
 
       - name: Verify files exist (before upload)
         run: |
-          echo "PWD: $(pwd)"
-          ls -al
-          echo "--- infra ---"
+          echo "PWD: $(pwd)"; ls -al
           ls -al infra || true
-
-          # compose 경로 자동 탐색 (.yml/.yaml, 루트/infra 모두 시도)
-          for p in ./docker-compose.yml ./docker-compose.yaml ./infra/docker-compose.yml ./infra/docker-compose.yaml; do
-            if [ -f "$p" ]; then
-              echo "Found compose: $p"
-              echo "COMPOSE_PATH=$p" >> $GITHUB_ENV
-              break
-            fi
-          done
-          test -n "${COMPOSE_PATH}" || { echo "::error::docker-compose file not found at repo root or infra/"; exit 1; }
-
-          # nginx conf 확인
-          test -f ./infra/nginx/app.conf || { echo "::error::missing infra/nginx/app.conf"; exit 1; }
-
-      - name: Prepare dirs on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            sudo mkdir -p /opt/hackathon/nginx
-            sudo chown -R $USER:$USER /opt/hackathon
+          test -f ./infra/docker-compose.yml || { echo "::error::missing ./infra/docker-compose.yml"; exit 1; }
+          test -f ./infra/nginx/app.conf     || { echo "::error::missing ./infra/nginx/app.conf"; exit 1; }
 
       - name: Prepare dirs on EC2
         uses: appleboy/ssh-action@v1.0.3
@@ -93,21 +70,20 @@ jobs:
       - name: Upload compose to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host:     ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key:      ${{ secrets.SSH_KEY }}
-          source: "docker-compose.yml"
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/docker-compose.yml"       # ← 경로 수정
           target: "/opt/hackathon/"
           overwrite: true
 
-  # nginx/app.conf 업로드 (레포 경로: infra/nginx/app.conf)
       - name: Upload nginx conf to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host:     ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key:      ${{ secrets.SSH_KEY }}
-          source: "infra/nginx/app.conf"
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/nginx/app.conf"           # ← 그대로 infra 경로
           target: "/opt/hackathon/nginx/"
           overwrite: true
 
