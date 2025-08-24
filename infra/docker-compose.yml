@@ -28,7 +28,7 @@ services:
     depends_on: [db]
     expose: [ "${APP_PORT}" ]
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${APP_PORT}${SERVER_SERVLET_CONTEXT_PATH}/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${APP_PORT}/actuator/health || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 10
