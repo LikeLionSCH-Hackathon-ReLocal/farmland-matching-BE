@@ -40,14 +40,27 @@ services:
 
   nginx:
     image: nginx:1.27-alpine
-    depends_on: [backend]
-    ports:
-      - "80:80"
+    container_name: hackathon-nginx
+    depends_on: [ backend ]              # ← 서비스 이름과 맞추기
+    ports: [ "80:80" ]
+    networks: [ app-net ]
     volumes:
-      - /opt/hackathon/nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
-      - /opt/hackathon/fe-build:/usr/share/nginx/html:ro
-    networks: [app-net]
+      - type: bind
+        source: /opt/hackathon/nginx/app.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+        bind:
+          create_host_path: true
+          selinux: z                  # SELinux 쓰는 환경만 의미 있음(없으면 무시/불필요)
+      - type: bind
+        source: /opt/hackathon/fe-build
+        target: /usr/share/nginx/html
+        read_only: true
+        bind:
+          create_host_path: true
+          selinux: z
     restart: unless-stopped
+
 
 networks:
   app-net:
