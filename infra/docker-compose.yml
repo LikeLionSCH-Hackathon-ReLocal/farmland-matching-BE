@@ -27,6 +27,9 @@ services:
       SUPABASE_BUCKET: ${SUPABASE_BUCKET}
       TZ: ${TZ}
       JAVA_OPTS: ${JAVA_OPTS}
+      AI_BASE_URL: ${AI_BASE_URL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on: [db]
     expose: [ "${APP_PORT}" ]
     healthcheck:

@@ -130,6 +130,9 @@ jobs:
               echo SUPABASE_URL=${{ secrets.SUPABASE_URL }} >> .env
               echo SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} >> .env
               echo SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }} >> .env
+            
+              echo "AI_BASE_URL=http://host.docker.internal:8000" >> .env
+
 
               # ===== docker compose 감지 =====
               if docker compose version >/dev/null 2>&1; then
