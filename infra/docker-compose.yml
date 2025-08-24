@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       TZ: ${TZ}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     networks: [app-net]
     restart: unless-stopped
 
@@ -54,4 +54,5 @@ networks:
     name: app-net
 
 volumes:
-  db-data:
+  pgdata:
+    name: hackathon_pgdata
