@@ -141,10 +141,11 @@ jobs:
             elif docker-compose version >/dev/null 2>&1; then
               DC="docker-compose"
             else
-              echo "[ERROR] docker compose not installed"; exit 3
+              echo "[ERROR] docker compose not installed"
+              exit 3
             fi
             echo "[INFO] Using: $DC"
-
+  
             docker network create app-net 2>/dev/null || true
 
             # GHCR(private) pull 필요시
@@ -153,7 +154,7 @@ jobs:
             fi
             
             # --- nginx 이름 충돌 사전 정리 ---
-            if docker ps -a --format '{{.Names}}' | grep -qx hackathon-nginx; then
+            if docker inspect hackathon-nginx >/dev/null 2>&1; then
               label=$(docker inspect -f '{{ index .Config.Labels "com.docker.compose.project" }}' hackathon-nginx || true)
 
               # (옵션) 정적파일/설정 백업
