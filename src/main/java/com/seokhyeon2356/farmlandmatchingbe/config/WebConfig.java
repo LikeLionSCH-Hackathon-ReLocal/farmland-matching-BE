@@ -28,7 +28,7 @@ public class WebConfig {
     }
 
     @Bean(name = "aiClient")
-    public WebClient aiClient(@Value("${ai.base-url}") String baseUrl) {
+    public WebClient aiClient(@Value("${AI_BASE_URL}") String baseUrl) {
         return WebClient.builder()
                 .baseUrl(baseUrl) // 예: http://211.235.66.149:8000
                 .build();
