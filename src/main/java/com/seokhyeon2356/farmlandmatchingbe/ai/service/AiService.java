@@ -150,6 +150,8 @@ public class AiService {
         row.setBuyerId(buyerId);
         row.setAiMatchScore(item.getTotalScore());
 
+        row.setAiMatchScore(nullIfZero(item.getTotalScore()));
+
         // 👇 scoreDetails -> JsonNode 로 변환해서 세팅
         row.setAiScoreDetail(objectMapper.valueToTree(item.getScoreDetails()));
 
@@ -165,5 +167,12 @@ public class AiService {
             log.warn("[ai-sync] score_details 직렬화 실패: {}", e.getMessage());
             return "{}";
         }
+    }
+
+    private static final double EPS = 1e-9;
+
+    private Double nullIfZero(Double v) {
+        if (v == null) return null;
+        return Math.abs(v) < EPS ? null : v;  // 0 또는 극소값을 null 처리
     }
 }
