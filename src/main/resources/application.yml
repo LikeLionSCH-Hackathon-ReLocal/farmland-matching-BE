@@ -28,9 +28,7 @@ spring:
           max-age: 3600
 
 ai:
-  base-url: ${AI_BASE_URL:http://host.docker.internal:8000}
-  connect-timeout-ms: 3000
-  read-timeout-ms: 15000
+  base-url: ${AI_BASE_URL}
 
 logging:
   level:

@@ -27,8 +27,10 @@ public class WebConfig {
         };
     }
 
-    @Bean
-    public WebClient aiClient(@Value("${ai.base-url}") String base) {
-        return WebClient.builder().baseUrl(base).build();
+    @Bean(name = "aiClient")
+    public WebClient aiClient(@Value("${ai.base-url}") String baseUrl) {
+        return WebClient.builder()
+                .baseUrl(baseUrl) // 예: http://211.235.66.149:8000
+                .build();
     }
 }

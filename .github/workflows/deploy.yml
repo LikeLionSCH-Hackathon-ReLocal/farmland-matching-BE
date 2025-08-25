@@ -120,7 +120,7 @@ jobs:
               echo SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} >> .env
               echo SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }} >> .env
             
-              echo "AI_BASE_URL=http://host.docker.internal:8000" >> .env
+              echo AI_BASE_URL=${{ secrets.AI_BASE_URL }} >> .env
 
 
               # ===== docker compose 감지 =====
